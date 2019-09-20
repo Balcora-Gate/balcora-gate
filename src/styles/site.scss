@@ -1,0 +1,32 @@
+@import './variables';
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	box-sizing: border-box;
+	font: $balcora-font-size Helvetica, Arial, sans-serif;
+	color: $balcora-content-white;
+	background-color: $balcora-base-gray;
+	font-size: 20px;
+}
+
+a {
+    color: $balcora-orange;
+}
+
+hr {
+	border: 1px solid $balcora-orange;
+	background: none;
+	height: 0;
+	margin: 1em 0 1em 0;
+	width: 90%;
+}
+
+@mixin vertical-centered {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
