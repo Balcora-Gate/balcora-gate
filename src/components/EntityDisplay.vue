@@ -3,7 +3,7 @@
 		<form method="get" class="main-form">
 			<div class="form-group">
 				<label for="name">Ship:</label>
-				<input type="text" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchShip" v-model="entity_name" >
+				<input type="text" class="large" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchShip" v-model="entity_name" >
 			</div>
 		</form>
 		<div v-if="loading" class="fetch-loading">Loading...</div>
@@ -67,19 +67,6 @@ export default class EntityDisplay extends Vue {
 			display: flex;
 			flex-direction: column;
 
-			label {
-				font-size: 1.1em;
-			}
-
-			input[type="text"] {
-				font-size: 1.7em;
-				padding: 0.3em;
-				// caret-color: $balcora-content-white;
-				color: $balcora-content-white;
-				background-color: darken($balcora-base-gray, 10%);
-				border: 2px solid $balcora-orange;
-				border-radius: 3px;
-			}
 		}
 	}
 

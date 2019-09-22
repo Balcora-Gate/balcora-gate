@@ -9,7 +9,7 @@
 				<li v-for="guide in guides" :key="guide">
 					<article class="guide">
 						<header class="guide-header">
-							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.header)" />
+							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.title)" />
 						</header>
 						<section class="guide-body" v-html="unescapeHtml(guide.body)">
 						</section>
@@ -59,7 +59,8 @@ header {
 	}
 	.guide {
 		@include vertical-centered();
-		border: 1px solid rgba($balcora-orange, 0.6);
+		// border: 1px solid rgba($balcora-orange, 0.6);
+		border: 2px solid $balcora-highlight-gray;
 		border-radius: 2px;
 		padding: 1.5em;
 		padding-top: 0.7em;

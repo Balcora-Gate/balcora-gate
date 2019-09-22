@@ -1,6 +1,7 @@
 <template>
 	<header>
 		<nav>
+			<router-link to="/" class="navbar-logo-container"><img src="@/assets/balcora-logo-small.png" alt="BALCORA" class="navbar-logo"/></router-link>
 			<a href="/">Home</a>
 			<a href="#">2.3 Changelogs</a>
 			<!-- <a href="#">Guides</a> -->
@@ -46,7 +47,16 @@ header nav > a {
 	margin: 0.5em;
 	padding-right: 1rem;
 	text-transform: uppercase;
-	border-right: 1px solid $balcora-orange;
+	border-right: 1px solid $balcora-content-white;
 	color: $balcora-content-white;
+	max-height: 80%;
+	width: auto;
+}
+
+.navbar-logo-container {
+	border: none;
+	.navbar-logo {
+		max-height: 3rem;
+	}
 }
 </style>

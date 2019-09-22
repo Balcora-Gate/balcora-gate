@@ -1,0 +1,43 @@
+@import "styles/_variables";
+
+label {
+	font-size: 1.1em;
+}
+
+textarea, input[type="text"] {
+	// caret-color: $balcora-content-white;
+	color: $balcora-content-white;
+	background-color: $balcora-dark-gray;
+	border: 2px solid $balcora-orange;
+	border-radius: 3px;
+	padding: 0.3em 10px 0.3em 10px;
+}
+
+input[type="text"].large {
+	font-size: 1.7em;
+	padding: 0.3em 10px 0.3em 10px;
+}
+
+// button {
+// 	border: 1px solid $balcora-orange;
+// 	padding: 0.3em 0.5em 0.3em 0.5em;
+// 	background-color: $balcora-highlight-gray;
+// 	color: $balcora-content-white;
+// 	font-weight: 600;
+// 	font-size: 1.1rem;
+// 	margin-right: 100%;
+// 	margin-left: auto;
+// }
+
+button {
+	border: 2px solid transparent;
+	border-radius: 3px;
+	background-color: darken($balcora-orange, 10%);
+	color: $balcora-content-white;
+	padding: 0.3em 0.5em 0.3em 0.5em;
+}
+
+button:disabled {
+	background-color: $balcora-highlight-gray;
+	color: lighten($balcora-highlight-gray, 10%);
+}

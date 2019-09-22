@@ -1,5 +1,11 @@
 @import './variables';
 
+@mixin vertical-centered {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -18,15 +24,14 @@ a {
 }
 
 hr {
+	margin-left: auto;
+	margin-right: auto;
 	border: 1px solid $balcora-orange;
 	background: none;
 	height: 0;
-	margin: 1em 0 1em 0;
 	width: 90%;
 }
 
-@mixin vertical-centered {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+.vertical-centered {
+	@include vertical-centered();
 }

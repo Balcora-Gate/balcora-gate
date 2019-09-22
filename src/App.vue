@@ -25,4 +25,5 @@ export default class App extends Vue {
 
 <style lang="scss">
 @import "styles/site";
+@import "styles/inputs";
 </style>

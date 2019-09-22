@@ -10,6 +10,7 @@ import EntityDisplay from './components/EntityDisplay.vue';
 import BalcoraArticle from './components/BalcoraArticle.vue';
 import GuidesIndex from './components/GuidesIndex.vue';
 import BalcoraGuide from './components/BalcoraGuide.vue';
+import GuideCreate from './components/GuideCreate.vue';
 
 const router = new VueRouter({
 	routes: [
@@ -24,6 +25,10 @@ const router = new VueRouter({
 		{
 			path: `/guide`,
 			component: GuidesIndex
+		},
+		{
+			path: `/guide/create`,
+			component: GuideCreate
 		},
 		{
 			path: `/guide/:slug`,
