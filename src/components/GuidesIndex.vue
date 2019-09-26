@@ -6,6 +6,9 @@
 				<p>Guides submitted by the HWRM community!</p>
 				<img src="@/assets/balcora-logo-small.png" alt="BALCORA" />
 			</header>
+			<div class="guide-actions" v-if="user">
+				<router-link to="/guide/create" tag="button">New Guide</router-link>
+			</div>
 			<ul class="guide-list">
 				<li v-for="(guide, index) in guides" :key="index">
 					<article class="guide">
@@ -25,6 +28,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
@@ -42,6 +46,10 @@ import BreadCrumb from './BreadCrumb.vue';
 export default class GuidesIndex extends Vue {
 	guides: Array<{[key: string]: string}> = [];
 
+	get user () {
+		return Cookies.get(`user_name`);
+	}
+
 	async mounted () {
 		this.guides = (await axios.get(`http://localhost:3000/guide`)).data;
 	}
@@ -57,6 +65,9 @@ export default class GuidesIndex extends Vue {
 		font-size: 2em;
 		margin: 1.5em;
 		margin-bottom: 1em;
+	}
+	.guide-actions {
+		margin: 1em 8vw 1em 8vw;
 	}
 	.guide-list {
 		padding: 0;
