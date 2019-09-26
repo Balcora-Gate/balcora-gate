@@ -3,14 +3,21 @@ import VueRouter from 'vue-router';
 import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import Cookies from 'js-cookie';
 
 import App from './App.vue';
 
 import EntityDisplay from './components/EntityDisplay.vue';
 import BalcoraArticle from './components/BalcoraArticle.vue';
-import GuidesIndex from './components/GuidesIndex.vue';
-import BalcoraGuide from './components/BalcoraGuide.vue';
+import GuideIndex from './components/GuidesIndex.vue';
+import GuideShow from './components/GuideShow.vue';
 import GuideCreate from './components/GuideCreate.vue';
+import UserCreate from './components/UserCreate.vue';
+import UserLogin from './components/UserLogin.vue';
+
+Vue.config.productionTip = false;
+Vue.use(VueRouter);
+Vue.use(BootstrapVue);
 
 const router = new VueRouter({
 	routes: [
@@ -24,22 +31,48 @@ const router = new VueRouter({
 		},
 		{
 			path: `/guide`,
-			component: GuidesIndex
+			component: GuideIndex,
+			meta: {
+				middleware: () => {
+					console.log(document.cookie);
+				}
+			}
 		},
 		{
 			path: `/guide/create`,
-			component: GuideCreate
+			component: GuideCreate,
+			beforeEnter: (to, from, next) => {
+				// const cookies = document.cookie.split(`;`).reduce((acc: {[key: string]: string}, kv_pair: string) => {
+				// 	const [key, val] = kv_pair.split(`=`);
+				// 	acc[key] = val;
+				// 	return acc;
+				// }, {});
+				// console.log(cookies);
+				const getCookie = (name: string) => {
+					const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+					return v ? v[2] : null;
+				};
+				console.log(getCookie(`user_name`));
+				getCookie(`user_name`) ? next() : next(false);
+			}
 		},
 		{
 			path: `/guide/:slug`,
-			component: BalcoraGuide
+			component: GuideShow
+		},
+		{
+			path: `/user/create`,
+			component: UserCreate
+		},
+		{
+			path: `/user/login`,
+			component: UserLogin,
+			beforeEnter: (to, from, next) => {
+				Cookies.get(`user_name`) ? next(false) : next();
+			}
 		}
 	]
 });
-
-Vue.config.productionTip = false;
-Vue.use(VueRouter);
-Vue.use(BootstrapVue);
 
 new Vue({
 	router: router,

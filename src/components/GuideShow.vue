@@ -1,17 +1,22 @@
 <template>
-	<div class="guide-container">
-		<article class="content">
-			<header class="title" v-html="unescapeHtml(guide.header)"></header>
+	<article class="guide-container">
+		<header class="heading-info"><bread-crumb /></header>
+		<section class="content">
+			<header class="title" v-html="unescapeHtml(guide.title)"></header>
 			<div class="content-body" v-html="unescapeHtml(guide.body)"></div>
-		</article>
-	</div>
+		</section>
+	</article>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import axios from 'axios';
 import { unescapeHtml } from 'lib/html_util';
+import BreadCrumb from './BreadCrumb.vue';
 @Component({
+	components: {
+		BreadCrumb
+	},
 	methods: {
 		unescapeHtml
 	}
@@ -27,4 +32,11 @@ export default class BalcoraGuide extends Vue {
 
 <style lang="scss">
 @import "styles/article-standard";
+
+// .heading-info {
+// 	margin: 1em;
+// 	margin-left: 10vw;
+// 	border-bottom: 1px solid $balcora-orange;
+// 	display: inline-block;
+// }
 </style>

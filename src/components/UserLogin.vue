@@ -1,14 +1,12 @@
 <template>
-	<section class="user-create-container">
-		<header>Register</header>
-		<form @submit.prevent="submitUser" method="post" class="create-user-form">
+	<section class="user-login-container">
+		<header>Login</header>
+		<form @submit.prevent="loginUser" method="post" class="login-user-form">
 			<label for="user-name">Name:</label>
 			<input type="text" name="user-name" class="user-name" v-model="name">
-			<label for="user-email">Email:</label>
-			<input type="email" name="user-email" class="user-email" v-model="email">
 			<label for="user-pass">Password:</label>
 			<input type="password" name="user-pass" class="user-pass" v-model="pass">
-			<button type="submit" class="user-submit" :disabled="form_error.length > 0">Register</button>
+			<button type="submit" class="user-login" :disabled="form_error.length > 0">Login</button>
 		</form>
 		<div class="form-error" v-if="form_error.length > 0">
 			<ul>
@@ -21,13 +19,12 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import Axios, { AxiosResponse } from 'axios';
+import { allCookies } from 'lib/cookie_util';
 
 @Component({})
-export default class UserCreate extends Vue {
+export default class UserLogin extends Vue {
 	name: string = ``;
 	pass: string = ``;
-	email: string = ``;
-	join_date?: Date;
 	response?: AxiosResponse;
 
 	get form_error (): Array<string> {
@@ -38,34 +35,31 @@ export default class UserCreate extends Vue {
 		if (!this.pass || this.pass.length === 0) {
 			errs.push(`Password is required`);
 		}
-		if (!this.email || this.email.length === 0) {
-			errs.push(`Email is required`);
-		}
 		return errs;
 	}
 
-	async submitUser () {
+	async loginUser () {
 		const payload = {
 			name: this.name,
-			pass: this.pass,
-			email: this.email,
-			join_date: new Date().toISOString()
+			pass: this.pass
 		};
-		const res = await Axios.post(`${process.env.VUE_APP_API_URI}/user/create`, payload, { withCredentials: true });
-		this.$router.push(`/`);
+		this.response = await Axios.post(`${process.env.VUE_APP_API_URI}/user/login`, payload, { withCredentials: true });
+		if (this.response!.status === 200) {
+			window.location.href = `/`;
+		}
 	}
 };
 </script>
 
 <style lang="scss" scoped>
 @import "styles/_mixins";
-.user-create-container {
+.user-login-container {
 	header {
 		font-size: 1.6em;
 		margin: 1em 0 0 0;
 	}
 	@include vertical-centered();
-	.create-user-form {
+	.login-user-form {
 		width: 30vw;
 		min-width: 20em;
 		@include vertical-centered();

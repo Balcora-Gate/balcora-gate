@@ -10,7 +10,7 @@
 		</form>
 		<div class="form-error" v-if="form_error.length > 0">
 			<ul>
-				<li v-for="error in form_error" :key="error">{{ error }}</li>
+				<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
 			</ul>
 		</div>
 		<div class="alert alert-warning" v-if="res !== undefined">{{ res }}</div>
@@ -48,14 +48,17 @@ export default class GuideCreate extends Vue {
 	}
 
 	async submitGuide () {
-		const res = await axios.post(`http://localhost:3000/guide`, {
+		const payload = {
 			name: this.name,
 			slug: this.name.split(``).map(c => c.replace(/\s+/gm, `-`)).join(``),
 			title: this.title,
 			body: this.body
-		});
+		};
+		const res = await axios.post(`${process.env.VUE_APP_API_URI}/guide/create`, payload, { withCredentials: true });
 		if (res.status !== 200) {
 			this.res_error = res;
+		} else {
+			this.$router.push(`/guide/${payload.slug}`);
 		}
 	}
 };
@@ -70,11 +73,6 @@ export default class GuideCreate extends Vue {
 		margin: 1em 0 0 0;
 	}
 	.guide-creation-form {
-		margin: 2em;
-		border: 1px solid $balcora-highlight-gray;
-		border-radius: 4px;
-		width: 50vw;
-		padding: 1.2em;
 
 		input, textarea {
 			width: 100%;

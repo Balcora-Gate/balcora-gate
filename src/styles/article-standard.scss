@@ -1,12 +1,5 @@
 @import "styles/_variables";
-
-@mixin center-align {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: center;
-	width: 100%;
-}
+@import "styles/_mixins";
 
 .title {
 	font-size: 1.2rem;

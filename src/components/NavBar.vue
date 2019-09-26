@@ -8,16 +8,59 @@
 			<router-link to="/guide">Guides</router-link>
 			<!-- <a href="/data">Game Info</a> -->
 			<router-link to="/data">Game Info</router-link>
+			<div class="right-links" v-if="user && user.length !== 0">
+				<a href="#">{{ user }}</a>
+				<a href="javascript:void(0);" @click="logoutUser">Logout</a>
+			</div>
+			<div class="right-links" v-else>
+				<router-link to="/user/login">Login</router-link>
+			</div>
 		</nav>
 	</header>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Component, Prop, Watch } from 'vue-property-decorator';
+import { allCookies } from 'lib/cookie_util';
+import Axios from 'axios';
+import Cookies from 'js-cookie';
 
 @Component({})
-export default class NavBar extends Vue {}
+export default class NavBar extends Vue {
+	get user () {
+		console.log(Cookies.get(`user_name`));
+		return Cookies.get(`user_name`);
+	}
+
+	@Watch(`user`, { immediate: true, deep: true }) w (new_val: string, old_val: string) {
+		console.log(`oh shit: ${new_val}`);
+	}
+
+	async logoutUser () {
+		const response = await Axios.post(`${process.env.VUE_APP_API_URI}/user/logout`, {}, { withCredentials: true });
+		console.log(response);
+		if (response.status === 200) {
+			const eraseCookieFromAllPaths = (name: string) => {
+				// This function will attempt to remove a cookie from all paths.
+				const pathBits = location.pathname.split('/');
+				let pathCurrent = ' path=';
+
+				// do a simple pathless delete first.
+				document.cookie = name + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT;';
+
+				for (let i = 0; i < pathBits.length; i++) {
+					pathCurrent += ((pathCurrent.substr(-1) !== '/') ? '/' : '') + pathBits[i];
+					document.cookie = name + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT;' + pathCurrent + ';';
+				}
+			};
+			for (const cookie of Object.keys(allCookies())) {
+				eraseCookieFromAllPaths(cookie);
+			}
+			window.location.href = `/`;
+		}
+	}
+}
 </script>
 
 <style lang="scss" scoped>
@@ -57,6 +100,15 @@ header nav > a {
 	border: none;
 	.navbar-logo {
 		max-height: 3rem;
+	}
+}
+
+.right-links {
+	margin-left: auto;
+	display: flex;
+	flex-direction: row;
+	* {
+		margin-right: 1em;
 	}
 }
 </style>
