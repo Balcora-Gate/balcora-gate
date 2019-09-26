@@ -1,26 +1,34 @@
 <template>
-	<section class="guide-create-container vertical-centered">
-		<header class="guide-create-header">New Guide</header>
+	<main class="guide-create-container">
+		<header><bread-crumb /></header>
+		<section class="vertical-centered">
+			<header class="guide-create-header">New Guide</header>
 
-		<form method="post" @submit.prevent="submitGuide" class="guide-creation-form vertical-centered">
-			<input type="text" name="guide-name" v-model="name" placeholder="Guide name" class="guide-name">
-			<input type="text" name="guide-title" v-model="title" placeholder="Title" >
-			<textarea name="guide-body" cols="30" rows="10" v-model="body" placeholder="Share your knowledge!"></textarea>
-			<button type="submit" :disabled="form_error.length > 0">Submit</button>
-		</form>
-		<div class="form-error" v-if="form_error.length > 0">
-			<ul>
-				<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
-			</ul>
-		</div>
-		<div class="alert alert-warning" v-if="res !== undefined">{{ res }}</div>
-	</section>
+			<form method="post" @submit.prevent="submitGuide" class="guide-creation-form vertical-centered">
+				<input type="text" name="guide-name" v-model="name" placeholder="Guide name" class="guide-name">
+				<input type="text" name="guide-title" v-model="title" placeholder="Title" >
+				<textarea name="guide-body" cols="30" rows="10" v-model="body" placeholder="Share your knowledge!"></textarea>
+				<button type="submit" :disabled="form_error.length > 0">Submit</button>
+			</form>
+			<div class="form-error" v-if="form_error.length > 0">
+				<ul>
+					<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
+				</ul>
+			</div>
+			<div class="alert alert-warning" v-if="res !== undefined">{{ res }}</div>
+		</section>
+	</main>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import axios, { AxiosResponse } from 'axios';
-@Component({})
+import BreadCrumb from './BreadCrumb.vue';
+@Component({
+	components: {
+		BreadCrumb
+	}
+})
 export default class GuideCreate extends Vue {
 	name: string = ``;
 	title: string = ``;

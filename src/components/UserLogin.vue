@@ -1,27 +1,35 @@
 <template>
-	<section class="user-login-container">
-		<header>Login</header>
-		<form @submit.prevent="loginUser" method="post" class="login-user-form">
-			<label for="user-name">Name:</label>
-			<input type="text" name="user-name" class="user-name" v-model="name">
-			<label for="user-pass">Password:</label>
-			<input type="password" name="user-pass" class="user-pass" v-model="pass">
-			<button type="submit" class="user-login" :disabled="form_error.length > 0">Login</button>
-		</form>
-		<div class="form-error" v-if="form_error.length > 0">
-			<ul>
-				<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
-			</ul>
-		</div>
-	</section>
+	<main class="user-login-container">
+		<header><bread-crumb /></header>
+		<section class="user-login">
+			<header>Login</header>
+			<form @submit.prevent="loginUser" method="post" class="login-user-form">
+				<label for="user-name">Name:</label>
+				<input type="text" name="user-name" class="user-name" v-model="name">
+				<label for="user-pass">Password:</label>
+				<input type="password" name="user-pass" class="user-pass" v-model="pass">
+				<button type="submit" class="user-login" :disabled="form_error.length > 0">Login</button>
+			</form>
+			<div class="form-error" v-if="form_error.length > 0">
+				<ul>
+					<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
+				</ul>
+			</div>
+		</section>
+	</main>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import Axios, { AxiosResponse } from 'axios';
 import { allCookies } from 'lib/cookie_util';
+import BreadCrumb from './BreadCrumb.vue';
 
-@Component({})
+@Component({
+	components: {
+		BreadCrumb
+	}
+})
 export default class UserLogin extends Vue {
 	name: string = ``;
 	pass: string = ``;
@@ -53,7 +61,7 @@ export default class UserLogin extends Vue {
 
 <style lang="scss" scoped>
 @import "styles/_mixins";
-.user-login-container {
+.user-login {
 	header {
 		font-size: 1.6em;
 		margin: 1em 0 0 0;

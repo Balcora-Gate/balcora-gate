@@ -14,7 +14,7 @@
 			</div>
 			<div class="right-links" v-else>
 				<router-link to="/user/login">Login</router-link>
-				<router-link to="/user/create">Register</router-link>
+				<router-link to="/user/register">Register</router-link>
 			</div>
 		</nav>
 	</header>

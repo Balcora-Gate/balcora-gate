@@ -61,7 +61,7 @@ const router = new VueRouter({
 			component: GuideShow
 		},
 		{
-			path: `/user/create`,
+			path: `/user/register`,
 			component: UserCreate
 		},
 		{

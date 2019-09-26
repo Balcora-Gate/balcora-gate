@@ -1,28 +1,36 @@
 <template>
-	<section class="user-create-container">
-		<header>Register</header>
-		<form @submit.prevent="submitUser" method="post" class="create-user-form">
-			<label for="user-name">Name:</label>
-			<input type="text" name="user-name" class="user-name" v-model="name">
-			<label for="user-email">Email:</label>
-			<input type="email" name="user-email" class="user-email" v-model="email">
-			<label for="user-pass">Password:</label>
-			<input type="password" name="user-pass" class="user-pass" v-model="pass">
-			<button type="submit" class="user-submit" :disabled="form_error.length > 0">Register</button>
-		</form>
-		<div class="form-error" v-if="form_error.length > 0">
-			<ul>
-				<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
-			</ul>
-		</div>
-	</section>
+	<main class="user-create-container">
+		<header><bread-crumb /></header>
+		<section class="user-create">
+			<header>Register</header>
+			<form @submit.prevent="submitUser" method="post" class="create-user-form">
+				<label for="user-name">Name:</label>
+				<input type="text" name="user-name" class="user-name" v-model="name">
+				<label for="user-email">Email:</label>
+				<input type="email" name="user-email" class="user-email" v-model="email">
+				<label for="user-pass">Password:</label>
+				<input type="password" name="user-pass" class="user-pass" v-model="pass">
+				<button type="submit" class="user-submit" :disabled="form_error.length > 0">Register</button>
+			</form>
+			<div class="form-error" v-if="form_error.length > 0">
+				<ul>
+					<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
+				</ul>
+			</div>
+		</section>
+	</main>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import Axios, { AxiosResponse } from 'axios';
+import BreadCrumb from './BreadCrumb.vue';
 
-@Component({})
+@Component({
+	components: {
+		BreadCrumb
+	}
+})
 export default class UserCreate extends Vue {
 	name: string = ``;
 	pass: string = ``;
@@ -59,7 +67,7 @@ export default class UserCreate extends Vue {
 
 <style lang="scss" scoped>
 @import "styles/_mixins";
-.user-create-container {
+.user-create {
 	header {
 		font-size: 1.6em;
 		margin: 1em 0 0 0;
