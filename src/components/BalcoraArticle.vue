@@ -23,7 +23,8 @@ export default class BalcoraArticle extends Vue {
 	private async mounted () {
 		const slug = this.$route.params.slug;
 		console.log(slug);
-		this.article = (await axios.get(`http://localhost:3000/article?slug=${slug || 'home'}`, { withCredentials: true })).data[0];
+		console.log(process.env.VUE_APP_API_URI);
+		this.article = (await axios.get(`${process.env.VUE_APP_API_URI}/article?slug=${slug || 'home'}`, { withCredentials: true })).data[0];
 	}
 };
 </script>

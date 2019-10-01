@@ -15,7 +15,8 @@ label {
 textarea, 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="search"] {
     // caret-color: $balcora-content-white;
     color: $balcora-content-white;
     background-color: $balcora-dark-gray;
@@ -24,7 +25,8 @@ input[type="password"] {
     padding: 0.3em 10px 0.3em 10px;
 }
 
-input[type="text"].large {
+input[type="text"].large,
+input[type="search"].large {
     font-size: 1.7em;
     padding: 0.3em 10px 0.3em 10px;
 }

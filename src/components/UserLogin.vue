@@ -15,12 +15,13 @@
 					<li v-for="(error, index) in form_error" :key="index">{{ error }}</li>
 				</ul>
 			</div>
+			<div class="form-error" v-if="response_error">{{ response_error }}</div>
 		</section>
 	</main>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import Axios, { AxiosResponse } from 'axios';
 import { allCookies } from 'lib/cookie_util';
 import BreadCrumb from './BreadCrumb.vue';
@@ -33,7 +34,7 @@ import BreadCrumb from './BreadCrumb.vue';
 export default class UserLogin extends Vue {
 	name: string = ``;
 	pass: string = ``;
-	response?: AxiosResponse;
+	response_error: string = ``;
 
 	get form_error (): Array<string> {
 		const errs: Array<string> = [];
@@ -46,14 +47,26 @@ export default class UserLogin extends Vue {
 		return errs;
 	}
 
+	@Watch(`name`)
+	@Watch(`pass`)
+	clearResponseError () {
+		this.response_error = ``;
+	}
+
 	async loginUser () {
 		const payload = {
 			name: this.name,
 			pass: this.pass
 		};
-		this.response = await Axios.post(`${process.env.VUE_APP_API_URI}/user/login`, payload, { withCredentials: true });
-		if (this.response!.status === 200) {
-			window.location.href = `/`;
+		try {
+			const response = await Axios.post(`${process.env.VUE_APP_API_URI}/user/login`, payload, { withCredentials: true });
+			if (response.status === 200) {
+				window.location.href = `/`;
+			}
+		} catch (err) {
+			if (err.response.status === 401) {
+				this.response_error = `Invalid username or password!`;
+			}
 		}
 	}
 };

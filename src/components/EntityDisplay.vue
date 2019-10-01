@@ -5,14 +5,15 @@
 			<form method="get" class="main-form">
 				<div class="form-group">
 					<label for="name">Ship:</label>
-					<input type="text" class="large" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchShip" v-model="entity_name" >
+					<input type="search" class="large" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchShip" v-model="entity_name" >
 				</div>
 			</form>
 			<div v-if="loading" class="fetch-loading">Loading...</div>
-			<div v-if="Object.keys(data).length !== 0" class="entity-display">
-				<div v-for="(cat_data, cat_name) in existant_data" :key="cat_name" class="entity-category">
-					<b-button v-b-toggle="cat_name" class="btn-collapse">{{cat_name}}</b-button>
-					<b-collapse :id="cat_name" class="entity-category-body">
+			<div v-for="(e_data, i) in data" :key="i" class="entity-display">
+				<div class="entity_name">{{ e_data.name }}</div>
+				<div v-for="(cat_data, cat_name) in existant_data(e_data)" :key="cat_name" class="entity-category">
+					<b-button v-b-toggle="`${cat_name}_${i}`" class="btn-collapse">{{cat_name}}</b-button>
+					<b-collapse :id="`${cat_name}_${i}`" class="entity-category-body">
 						<table>
 							<thead>
 								<th>Attribute</th>
@@ -47,8 +48,8 @@ export default class EntityDisplay extends Vue {
 	private entity_name: string = '';
 	private loading: boolean = false;
 
-	get existant_data () {
-		return Object.entries(this.data).reduce((acc: {[key: string]: any}, [k, v]: [string, any]) => {
+	existant_data (data: {[key: string]: any}) {
+		return Object.entries(data).reduce((acc: {[key: string]: any}, [k, v]: [string, any]) => {
 			if (v && typeof v === 'object') {
 				acc[k] = v;
 			}
@@ -58,7 +59,7 @@ export default class EntityDisplay extends Vue {
 
 	private async fetchShip () {
 		this.loading = true;
-		this.data = (await axios.get(`http://localhost:3000/data?name=${this.entity_name}`)).data[0];
+		this.data = (await axios.get(`${process.env.VUE_APP_API_URI}/data?name=${this.entity_name}`)).data;
 		this.loading = false;
 	}
 };
@@ -84,11 +85,16 @@ export default class EntityDisplay extends Vue {
 		width: 80vw;
 		@include vertical-centered();
 		border: 1px solid $balcora-highlight-gray;
+		.entity_name {
+			margin: 0.5em 0 0 0;
+			font-size: 1.4em;
+		}
+
 		.btn-collapse {
 			border: none;
 			background-color: inherit;
 			color: $balcora-orange;
-			font-size: 1.4em;
+			font-size: 1.2em;
 			font-weight: bolder;
 		}
 

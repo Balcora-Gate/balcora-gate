@@ -8,15 +8,19 @@
 			</header>
 			<div class="guide-actions" v-if="user">
 				<router-link to="/guide/create" tag="button">New Guide</router-link>
+				<div class="guide-search-container">
+					<label for="guide-search">Search:</label>
+					<input type="search" name="guide-search" v-model="search">
+				</div>
 			</div>
 			<ul class="guide-list">
-				<li v-for="(guide, index) in guides" :key="index">
+				<li v-for="(guide, index) in searched_guides" :key="index">
 					<article class="guide">
 						<header class="guide-header">
-							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.title)" />
+							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.name)" />
 							<div class="guide-header-info">By: {{guide.user}}</div>
 						</header>
-						<section class="guide-body" v-html="`${snip(unescapeHtml(guide.body), 64)}...`">
+						<section class="guide-body" v-html="`${snip(toMarkDown(unescapeHtml(guide.body)), 64)}...`">
 						</section>
 					</article>
 				</li>
@@ -29,6 +33,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import marked from 'marked';
 
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
@@ -45,13 +50,26 @@ import BreadCrumb from './BreadCrumb.vue';
 })
 export default class GuidesIndex extends Vue {
 	guides: Array<{[key: string]: string}> = [];
+	search: string = ``;
+
+	get searched_guides () {
+		if (this.search === ``) {
+			return this.guides;
+		} else {
+			return this.guides.filter(g => g.name.includes(this.search));
+		}
+	}
 
 	get user () {
 		return Cookies.get(`user_name`);
 	}
 
+	toMarkDown (plain: string) {
+		return marked(plain);
+	}
+
 	async mounted () {
-		this.guides = (await axios.get(`http://localhost:3000/guide`)).data;
+		this.guides = (await axios.get(`${process.env.VUE_APP_API_URI}/guide`)).data;
 	}
 };
 </script>
@@ -68,6 +86,18 @@ export default class GuidesIndex extends Vue {
 	}
 	.guide-actions {
 		margin: 1em 8vw 1em 8vw;
+		display: flex;
+		flex-direction: row;
+
+		.guide-search-container {
+			margin-left: 1em;
+			display: flex;
+			flex-direction: column;
+			label {
+				font-size: 0.9em;
+				margin: 0;
+			}
+		}
 	}
 	.guide-list {
 		padding: 0;

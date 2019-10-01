@@ -14,10 +14,12 @@ import GuideShow from './components/GuideShow.vue';
 import GuideCreate from './components/GuideCreate.vue';
 import UserCreate from './components/UserCreate.vue';
 import UserLogin from './components/UserLogin.vue';
+import Split from 'vue-split-panel';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
+Vue.use(Split);
 
 const router = new VueRouter({
 	routes: [
