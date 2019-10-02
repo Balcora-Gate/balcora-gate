@@ -69,7 +69,7 @@ export default class GuidesIndex extends Vue {
 	}
 
 	async mounted () {
-		this.guides = (await axios.get(`${process.env.VUE_APP_API_URI}/guide`)).data;
+		this.guides = (await axios.get(`${process.env.VUE_APP_API_URI}/guide`, { withCredentials: true })).data;
 	}
 };
 </script>
