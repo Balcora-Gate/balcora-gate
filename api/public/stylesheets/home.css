@@ -1,0 +1,76 @@
+* {
+  box-sizing: border-box; }
+
+body {
+  margin: 0;
+  box-sizing: border-box;
+  font: 16px Helvetica, Arial, sans-serif;
+  color: #dedede;
+  background-color: #212121; }
+
+a {
+  color: #ff640a; }
+
+hr {
+  border: 1px solid #ff640a;
+  background: none;
+  height: 0;
+  margin: 1em 0 1em 0;
+  width: 90%; }
+
+#page > header {
+  border-bottom: 4px solid #ff640a;
+  height: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #393939; }
+
+#page > header nav {
+  background: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  height: 100%;
+  max-width: 100%;
+  width: 80vw;
+  font-size: 1.2rem; }
+
+#page > header nav > a {
+  margin: 0.5em;
+  padding-right: 1rem;
+  text-transform: uppercase;
+  border-right: 1px solid #ff640a;
+  color: #dedede; }
+
+.title {
+  font-size: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
+
+.title h1 {
+  font-weight: bolder;
+  font-size: 4.7rem;
+  margin: 0; }
+
+.title p {
+  font-family: "Menlo", "Liberation Mono", "Consolas", "DejaVu Sans Mono", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace; }
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  font-size: 1.5rem;
+  margin-top: 2.2rem;
+  padding: 1rem 3rem 1rem 3rem;
+  box-sizing: border-box; }
+
+.content .center-align {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center; }

@@ -59,8 +59,16 @@ export default class UserCreate extends Vue {
 			email: this.email,
 			join_date: new Date().toISOString()
 		};
-		const res = await Axios.post(`${process.env.VUE_APP_API_URI}/user/create`, payload, { withCredentials: true });
-		this.$router.push(`/`);
+		try {
+			const response = await Axios.post(`${process.env.VUE_APP_API_URI}/user/create`, payload, { withCredentials: true });
+			if (response.status === 200) {
+				window.location.href = `/`;
+			} else {
+				throw new Error(`Unknown frontend error when attempting to login.`);
+			}
+		} catch (err) {
+			console.log(`error: ${err.message}`);
+		}
 	}
 };
 </script>

@@ -62,10 +62,14 @@ export default class UserLogin extends Vue {
 			const response = await Axios.post(`${process.env.VUE_APP_API_URI}/user/login`, payload, { withCredentials: true });
 			if (response.status === 200) {
 				window.location.href = `/`;
+			} else {
+				throw new Error(`Unknown frontend error when attempting to login.`);
 			}
 		} catch (err) {
 			if (err.response.status === 401) {
 				this.response_error = `Invalid username or password!`;
+			} else {
+				this.response_error = err.message;
 			}
 		}
 	}

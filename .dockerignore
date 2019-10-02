@@ -1,5 +1,10 @@
+# git stuff
+.git
+.gitignore
+
+# misc stuff
 .DS_Store
-node_modules
+**/node_modules
 /dist
 
 # local env files
@@ -13,5 +18,9 @@ yarn-error.log*
 
 ## fucking typescript
 **/*.js
-!**/gulpfile.js
 **/*.js.map
+
+!**/gulpfile.js
+!**/vue.config.js
+!**/postcss.config.js
+!**/.eslintrc.js
