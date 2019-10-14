@@ -12,6 +12,27 @@ export function validSession (...session_types: Array<SESSION_TYPE>) {
 			console.log(`fail!`);
 			res.status(401).end(`Unauthenticated`);
 		} else {
+			console.log(req.cookies);
+			console.log(req.session);
+			if (session_type === 2) {
+				next();
+			} else {
+				console.log(req.cookies);
+				if (!req.cookies) {
+					res.cookie(`user_name`, req.session!.user_name);
+					console.log(`no user cookie set...`);
+					res.status(400).end();
+				}
+				if (req.session!.user_name !== req.cookies!.user_name) {
+					console.log(`req session user and browser's user are not the same!`);
+					req.session!.destroy((err) => {
+						console.log(err);
+					});
+					req.cookies.user_name = null;
+					res.status(401).cookie(`user_name`, null, { maxAge: -1 }).end(`Invalid session, please try relogging.`);
+					return;
+				}
+			}
 			console.log(`success!`);
 			next();
 		}

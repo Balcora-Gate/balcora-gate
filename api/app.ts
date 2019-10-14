@@ -13,10 +13,12 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import serveStatic from 'serve-static';
+import cookieParser from 'cookie-parser';
 
 export const app = express();
 app.use(serveStatic(`../dist`));
 app.set(`trust proxy`, (process.env.NODE_ENV === `production`));
+app.use(cookieParser());
 
 app.use(cors({
 	credentials: true
@@ -24,7 +26,6 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(`public`));
 
 routes(app);
 app.use((req, res, next) => {

@@ -1,4 +1,4 @@
-import mongoose, { model } from 'mongoose';
+import mongoose from 'mongoose';
 import { Response, Request, NextFunction } from 'express';
 
 export default (query: { model: mongoose.Model<mongoose.Document, {}> }, document?: { [key: string]: any }) => {

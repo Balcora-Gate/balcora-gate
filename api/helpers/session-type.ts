@@ -10,16 +10,17 @@ export const enum SESSION_TYPE {
 	USER
 };
 export const sessionType = (req: Request): Promise<SESSION_TYPE> => {
+	console.log(req.session);
 	return new Promise((res) => {
 		if (!req.session) {
 			console.log(`sol, no session`);
 			res(SESSION_TYPE.NO_SESSION);
-		} else if (!req.session.user_name) {
+		} else if (!req.session!.user_name) {
 			console.log(`anon session`)
 			res(SESSION_TYPE.ANON);
 		} else {
 			sess.redis_client.exists(`sess:${req.sessionID}`, function (err, reply) {
-				console.log(`key is: ${req.session!.user_name}`);
+				console.log(`key is: ${req.sessionID}`);
 				console.log(`redis says:`);
 				console.log(err);
 				console.log(reply);

@@ -14,9 +14,27 @@ router.get(`/show`, resourceFetcher({ model: User, key: `name` }), (req, res, ne
 	}
 	res.send(res.locals.data);
 });
-router.get(`/show/:name`, resourceFetcher({ model: User, key: `name` }), (req, res, next) => {
-	res.status(200).send(res.locals.data);
-});
+
+router.get(`/validate`,
+	appSession,
+	validSession(SESSION_TYPE.USER),
+	(req, res) => {
+		res.status(200).end();
+	});
+
+router.post(`/passcheck`,
+	appSession,
+	validSession(SESSION_TYPE.USER),
+	resourceFetcher({ model: User, key: `name` }),
+	async (req, res) => {
+		if (await bcrypt.compare(req.body.pass, res.locals.data[0].pass)) {
+			console.log(`ok`);
+			res.status(200).end();
+		} else {
+			res.status(401).end(`INVALID PASS`);
+		}
+	});
+
 // session user => create entry in db => response
 router.post(`/create`, appSession, validSession(SESSION_TYPE.ANON, SESSION_TYPE.NO_SESSION), resourcePoster({ model: User }), (req, res) => {
 	console.log(req.sessionID);
@@ -44,7 +62,11 @@ router.post(
 	},
 	(req, res, next) => {
 		req.session!.user_name = req.body.name;
-		res.status(200).cookie(`user_name`, req.body.name).send();
+		res.locals.data = {};
+		res.status(200).cookie(`user_name`, req.body.name, { 
+			secure: process.env.NODE_ENV === `production`,
+			maxAge: req.session!.cookie.maxAge!
+		}).send();
 	}
 );
 

@@ -2,7 +2,9 @@ import mongoose from 'mongoose';
 import { Response, Request, NextFunction } from 'express';
 
 export default function (
-	query: { model: mongoose.Model<mongoose.Document, {[key: string]: any}>, key: string },
+	query: { 
+		model: mongoose.Model<mongoose.Document, {[key: string]: any}>, key: string
+	},
 	explicit_filter?: { [key: string]: string }
 ) {
 	return async function (req: Request, res: Response, next: NextFunction) {
