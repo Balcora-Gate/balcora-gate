@@ -18,7 +18,13 @@
 					<article class="guide">
 						<header class="guide-header">
 							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.name)" />
-							<div class="guide-header-info">By: {{guide.user}}</div>
+							<div class="guide-header-info">
+								<div>By: {{guide.user}}</div>
+								<div class="guide-controls" v-if="user && user === guide.user">
+									<router-link :to="`guide/${guide.slug}/edit`">Edit</router-link>
+									<a href="javascript:void(0);" @click="deleteGuide(guide)">Delete</a>
+								</div>
+							</div>
 						</header>
 						<section class="guide-body" v-html="`${snip(toMarkDown(unescapeHtml(guide.body)), 64)}...`">
 						</section>
@@ -26,6 +32,9 @@
 				</li>
 			</ul>
 		</section>
+		<div id="popup-modal">
+			<password-confirm />
+		</div>
 	</main>
 </template>
 
@@ -38,10 +47,12 @@ import marked from 'marked';
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
 import BreadCrumb from './BreadCrumb.vue';
+import PasswordConfirm from './cmp/PasswordConfirm.vue';
 
 @Component({
 	components: {
-		BreadCrumb
+		BreadCrumb,
+		PasswordConfirm
 	},
 	methods: {
 		unescapeHtml,
@@ -51,6 +62,7 @@ import BreadCrumb from './BreadCrumb.vue';
 export default class GuidesIndex extends Vue {
 	guides: Array<{[key: string]: string}> = [];
 	search: string = ``;
+	popup_modal_el: HTMLElement | undefined;
 
 	get searched_guides () {
 		if (this.search === ``) {
@@ -68,8 +80,35 @@ export default class GuidesIndex extends Vue {
 		return marked(plain);
 	}
 
-	async mounted () {
+	async deleteGuide (guide: { [key: string]: any }) {
+		if (window.confirm(`Do you really want to delete '${guide.name}'?\n\nThis action is irreversible!`)) {
+			if (this.popup_modal_el) {
+				this.popup_modal_el.style.display = `flex`;
+				const modal_result = await new Promise((res, rej) => {
+					this.$on(`valid_password`, () => res(`ok`));
+					this.$on(`modal_cancel`, () => res(`cancel`));
+				});
+				console.log(modal_result);
+				if (modal_result === `ok`) {
+					try {
+						const res = (await axios.delete(`${process.env.VUE_APP_API_URI}/guide/delete?slug=${guide.slug}`, { withCredentials: true }));
+						this.fetchGuides();
+					} catch (err) {
+						console.log(err.message);
+					}
+				}
+				this.popup_modal_el.style.display = `none`;
+			}
+		}
+	}
+
+	async fetchGuides () {
 		this.guides = (await axios.get(`${process.env.VUE_APP_API_URI}/guide`, { withCredentials: true })).data;
+	}
+
+	async mounted () {
+		this.popup_modal_el = document.getElementById(`popup-modal`)!;
+		this.fetchGuides();
 	}
 };
 </script>
@@ -128,9 +167,28 @@ export default class GuidesIndex extends Vue {
 					font-size: 1rem;
 					border-right: 1px solid $balcora-highlight-gray;
 					padding: 0 1em 0 1em;
+					display: flex;
+					flex-direction: column;
+
+					.guide-controls {
+						margin: 0.2em;
+						display: flex;
+						flex-direction: column;
+					}
 				}
 			}
 		}
 	}
+}
+#popup-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 99;
+	@include vertical-centered();
+	justify-content: center;
+	display: none;
 }
 </style>

@@ -5,10 +5,18 @@
 			<header>
 				<div class="title" v-html="unescapeHtml(guide.title)"></div>
 				<div class="info">By: {{ guide.user }}</div>
+				<ul class="actions">
+					<li class="action" v-for="(action, i) in actions" :key="i">
+						<a href="javascript:void(0);" @click="action.cb">[ {{ action.display }} ]</a>
+					</li>
+				</ul>
 			</header>
 			<hr style="width: 50%">
 			<div class="content-body" v-html="md_guide"></div>
 		</section>
+		<div id="popup-modal" v-if="show_modal">
+			<password-confirm />
+		</div>
 	</article>
 </template>
 
@@ -18,9 +26,11 @@ import axios from 'axios';
 import { unescapeHtml, standardPurify } from 'lib/html_util';
 import BreadCrumb from './BreadCrumb.vue';
 import marked from 'marked';
+import PasswordConfirm from './cmp/PasswordConfirm.vue';
 @Component({
 	components: {
-		BreadCrumb
+		BreadCrumb,
+		PasswordConfirm
 	},
 	methods: {
 		unescapeHtml
@@ -28,6 +38,12 @@ import marked from 'marked';
 })
 export default class BalcoraGuide extends Vue {
 	guide: {[key: string]: string} = {};
+	show_modal: boolean = false;
+	actions: Array<{
+		[key: string]: any,
+		display: string,
+		cb: Function
+		}> = [];
 
 	get md_guide (): string {
 		return standardPurify(this.guide.body);
@@ -35,6 +51,36 @@ export default class BalcoraGuide extends Vue {
 
 	async mounted () {
 		this.guide = (await axios.get(`${process.env.VUE_APP_API_URI}/guide?slug=${this.$route.params.slug}`)).data[0];
+		this.actions = [
+			{
+				display: `edit`,
+				cb: () => {
+					this.$router.push(`/guide/${this.guide.slug}/edit`);
+				}
+			},
+			{
+				display: `delete`,
+				cb: async () => {
+					if (window.confirm(`Do you really want to delete '${this.guide.name}'?\n\nThis action is irreversible!`)) {
+						this.show_modal = true;
+						const modal_result = await new Promise((res, rej) => {
+							this.$on(`valid_password`, () => res(`ok`));
+							this.$on(`modal_cancel`, () => res(`cancel`));
+						});
+						console.log(modal_result);
+						if (modal_result === `ok`) {
+							try {
+								const res = (await axios.delete(`${process.env.VUE_APP_API_URI}/guide/delete?slug=${this.guide.slug}`, { withCredentials: true }));
+								this.$router.push(`/guide`);
+							} catch (err) {
+								console.log(err.message);
+							}
+						}
+						this.show_modal = false;
+					}
+				}
+			}
+		];
 	}
 };
 </script>
@@ -53,6 +99,19 @@ export default class BalcoraGuide extends Vue {
 		.info {
 			font-size: 0.9em;
 		}
+		.actions {
+			display: flex;
+			flex-direction: row;
+			list-style: none;
+			margin: 0;
+			margin-top: 1em;
+			padding: 0;
+
+			* {
+				margin-left: 0.1em;
+				margin-right: 0.1em;
+			}
+		}
 	}
 	.content-body {
 		margin-top: 1em;
@@ -63,5 +122,16 @@ export default class BalcoraGuide extends Vue {
 		border-top: 0;
 		border-bottom: 0;
 	}
+}
+#popup-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 99;
+	@include vertical-centered();
+	justify-content: center;
+	display: flex;
 }
 </style>

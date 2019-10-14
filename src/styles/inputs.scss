@@ -12,7 +12,15 @@ label {
     font-size: 1.1em;
 }
 
-textarea, 
+select {
+    appearance: none;
+    background-image: url('./assets/select-arrow-32.png');
+    background-position: center right;
+    background-repeat: no-repeat;
+}
+
+textarea,
+select,
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -45,9 +53,13 @@ input[type="search"].large {
 button {
     border: 2px solid transparent;
     border-radius: 3px;
-    background-color: darken($balcora-orange, 10%);
+    background-color: $balcora-orange;
     color: $balcora-content-white;
-    padding: 0.3em 0.5em 0.3em 0.5em;
+    padding: 0.4em 0.6em 0.4em 0.6em;
+}
+
+button[type="submit"] {
+    background-color: $balcora-blue;
 }
 
 button:disabled {

@@ -4,12 +4,14 @@ import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import Cookies from 'js-cookie';
+import Axios from 'axios';
 import App from './App.vue';
 import EntityDisplay from './components/EntityDisplay.vue';
 import BalcoraArticle from './components/BalcoraArticle.vue';
 import GuideIndex from './components/GuidesIndex.vue';
 import GuideShow from './components/GuideShow.vue';
 import GuideCreate from './components/GuideCreate.vue';
+import GuideEdit from './components/GuideEdit.vue';
 import UserCreate from './components/UserCreate.vue';
 import UserLogin from './components/UserLogin.vue';
 import Split from 'vue-split-panel';
@@ -46,12 +48,23 @@ const router = new VueRouter({
 				// 	return acc;
 				// }, {});
 				// console.log(cookies);
-				const getCookie = (name) => {
-					const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-					return v ? v[2] : null;
-				};
-				console.log(getCookie(`user_name`));
-				getCookie(`user_name`) ? next() : next(false);
+				console.log(Cookies.get(`user_name`) !== undefined);
+				Cookies.get(`user_name`) !== undefined ? next() : next(false);
+			}
+		},
+		{
+			path: `/guide/:slug/edit`,
+			component: GuideEdit,
+			beforeEnter: async (to, from, next) => {
+				const user_name = Cookies.get(`user_name`);
+				const guide_poster = (await Axios.get(`${process.env.VUE_APP_API_URI}/guide?slug=${to.params.slug}`)).data[0].user;
+				console.log(user_name);
+				console.log(guide_poster);
+				if (user_name === guide_poster) {
+					next();
+				} else {
+					next(false);
+				}
 			}
 		},
 		{

@@ -13,21 +13,38 @@ export const standardPurify = (html) => {
 		FORBID_TAGS: [
 			`style`,
 			`form`,
-			`input`,
 			`script`,
 			`svg`,
-			`video`,
 			`body`,
 			`head`,
 			`iframe`,
 			`source`,
 			`button`,
 			`math`,
-			`link`,
-			`picture`,
 			`details`,
-			`applet`,
-			`bgsound`
+			`applet`
+		],
+		FORBID_ATTR: [
+			`style`,
+			`background`,
+			`onclick`,
+			`ondblclick`,
+			`onmousedown`,
+			`onmousemove`,
+			`onmouseover`,
+			`onmouseout`,
+			`onmouseup`,
+			`onkeydown`,
+			`onkeypress`,
+			`onkeyup`,
+			`onchange`,
+			`onsubmit`,
+			`onreset`,
+			`onselect`,
+			`onblur`,
+			`onfocus`,
+			`onload`,
+			`onunload`
 		]
 	});
 };

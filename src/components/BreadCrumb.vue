@@ -4,11 +4,8 @@
 			<li>
 				<router-link to="/">home</router-link>
 			</li>
-			<li>
-				<router-link :to="`/${crumbs[0]}`"> / {{crumbs[0]}}</router-link>
-			</li>
-			<li v-for="(crumb, i) in crumbs.slice(1)" :key="i">
-				<router-link :to="crumbs.slice(1).join(`/`)"> / {{crumb}}</router-link>
+			<li v-for="(crumb, i) in crumbs" :key="i">
+				<router-link :to="`/${crumbs.slice(0, i + 1).join(`/`)}`"> / {{crumb}} </router-link>
 			</li>
 		</ol>
 	</nav>
@@ -36,6 +33,7 @@ export default class BreadCrumb extends Vue {
 		padding: 0.2em;
 		background-color: $balcora-highlight-gray;
 		border-radius: 3px;
+		font-size: 18px;
 		li {
 			display: inline;
 		}

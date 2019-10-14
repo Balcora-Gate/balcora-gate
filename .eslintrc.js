@@ -14,7 +14,8 @@ module.exports = {
 		'no-tabs': 0,
 		'indent': ['error', 'tab'],
 		'semi': ['error', 'always'],
-		'camelcase': 'off'
+		'camelcase': 'off',
+		'promise/param-names': 'off'
 	},
 	parserOptions: {
 		parser: '@typescript-eslint/parser'

@@ -25,6 +25,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import Axios, { AxiosResponse } from 'axios';
 import BreadCrumb from './BreadCrumb.vue';
+import { validatePassword } from '../js/string_util';
 
 @Component({
 	components: {
@@ -45,6 +46,11 @@ export default class UserCreate extends Vue {
 		}
 		if (!this.pass || this.pass.length === 0) {
 			errs.push(`Password is required`);
+		} else {
+			const pass_errs = validatePassword(this.pass);
+			if (pass_errs.length > 0) {
+				errs.push(...pass_errs);
+			}
 		}
 		if (!this.email || this.email.length === 0) {
 			errs.push(`Email is required`);

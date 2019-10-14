@@ -4,8 +4,12 @@
 		<section class="content">
 			<form method="get" class="main-form">
 				<div class="form-group">
-					<label for="name">Ship:</label>
-					<input type="search" class="large" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchShip" v-model="entity_name" >
+					<select v-model="entity_type" @change="fetchEntity">
+						<option value="ship">Ship</option>
+						<option value="subs">Subsystem</option>
+						<option value="wepn">Weapon</option>
+					</select>
+					<input type="search" class="large" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchEntity" v-model="entity_name" >
 				</div>
 			</form>
 			<div v-if="loading" class="fetch-loading">Loading...</div>
@@ -45,6 +49,7 @@ import BreadCrumb from './BreadCrumb.vue';
 })
 export default class EntityDisplay extends Vue {
 	private data: any = {};
+	private entity_type: string = `ship`;
 	private entity_name: string = '';
 	private loading: boolean = false;
 
@@ -57,9 +62,9 @@ export default class EntityDisplay extends Vue {
 		}, {});
 	}
 
-	private async fetchShip () {
+	private async fetchEntity () {
 		this.loading = true;
-		this.data = (await axios.get(`${process.env.VUE_APP_API_URI}/data?name=${this.entity_name}`)).data;
+		this.data = (await axios.get(`${process.env.VUE_APP_API_URI}/data?type=${this.entity_type}&name=${this.entity_name}`)).data;
 		this.loading = false;
 	}
 };
@@ -76,8 +81,15 @@ export default class EntityDisplay extends Vue {
 	.main-form {
 		.form-group {
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
 
+			select {
+				width: 9em;
+			}
+
+			input {
+				width: 100%;
+			}
 		}
 	}
 
