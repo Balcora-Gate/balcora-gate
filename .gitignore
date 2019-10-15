@@ -15,3 +15,5 @@ yarn-error.log*
 **/*.js
 !**/gulpfile.js
 **/*.js.map
+
+dump.rdb

@@ -7,7 +7,7 @@
 				<div class="info">By: {{ guide.user }}</div>
 				<ul class="actions">
 					<li class="action" v-for="(action, i) in actions" :key="i">
-						<a href="javascript:void(0);" @click="action.cb">[ {{ action.display }} ]</a>
+						[ <a href="javascript:void(0);" @click="action.cb">{{ action.display }}</a> ]
 					</li>
 				</ul>
 			</header>
@@ -27,6 +27,13 @@ import { unescapeHtml, standardPurify } from 'lib/html_util';
 import BreadCrumb from './BreadCrumb.vue';
 import marked from 'marked';
 import PasswordConfirm from './cmp/PasswordConfirm.vue';
+import HLJS from 'highlight.js';
+marked.setOptions({
+	highlight: (code, lang) => {
+		if (lang) return HLJS.highlight(lang, code).value;
+		else return HLJS.highlightAuto(lang).value;
+	}
+});
 @Component({
 	components: {
 		BreadCrumb,
@@ -46,7 +53,11 @@ export default class BalcoraGuide extends Vue {
 		}> = [];
 
 	get md_guide (): string {
-		return standardPurify(this.guide.body);
+		if (this.guide.body) {
+			return standardPurify(marked(unescapeHtml(this.guide.body)));
+		} else {
+			return `Loading...`;
+		}
 	}
 
 	async mounted () {
@@ -85,9 +96,10 @@ export default class BalcoraGuide extends Vue {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "styles/_variables";
 @import "styles/_mixins";
+@import "styles/code-highlight";
 .content {
 	header {
 		@include vertical-centered();
