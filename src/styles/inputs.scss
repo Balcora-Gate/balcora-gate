@@ -66,3 +66,10 @@ button:disabled {
     background-color: $balcora-highlight-gray;
     color: lighten($balcora-highlight-gray, 10%);
 }
+
+.form-group {
+    * {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}

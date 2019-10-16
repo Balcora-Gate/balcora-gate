@@ -1,0 +1,25 @@
+@import "styles/_variables";
+
+@import "styles/highlight-js/monokai-sublime";
+
+pre {
+	color: #ddd;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 0.5em;
+	background: $balcora-dark-gray;
+
+	code {
+		.hljs-keywords {
+			color: #89ddff;
+		}
+
+		.hljs-number {
+			color: #dd5422;
+		}
+
+		.hljs-symbol {
+			color: #ddd;
+		}
+	}
+}

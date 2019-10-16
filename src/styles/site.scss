@@ -12,6 +12,7 @@ body {
 	color: $balcora-content-white;
 	background-color: $balcora-base-gray;
 	font-size: 20px;
+	line-height: 1.3em;
 }
 
 a {
@@ -29,6 +30,22 @@ hr {
 	background: none;
 	height: 0;
 	width: 90%;
+}
+
+blockquote {
+	background: #222 !important;
+	border: 1px solid #666 !important;
+	border-radius: 2px !important;
+	padding: 7px !important;
+	font-style: italic !important;
+
+	:first-child {
+		margin-top: 0 !important;
+	}
+
+	:last-child {
+		margin-bottom: 0 !important;
+	}
 }
 
 .vertical-centered {

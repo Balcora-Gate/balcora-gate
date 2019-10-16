@@ -1,7 +1,7 @@
 <template>
 	<article class="content">
-		<header class="title" v-html="unescapeHtml(article.title)"></header>
-		<div class="content-body" v-html="unescapeHtml(article.body)"></div>
+		<header v-if="article.title" class="title" v-html="unescapeHtml(article.title)"></header>
+		<div v-if="article.body" class="content-body" v-html="unescapeHtml(article.body)"></div>
 	</article>
 </template>
 

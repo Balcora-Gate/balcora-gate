@@ -9,7 +9,7 @@
 						<option value="subs">Subsystem</option>
 						<option value="wepn">Weapon</option>
 					</select>
-					<input type="search" class="large" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchEntity" v-model="entity_name" >
+					<input type="search" class="large" name="name" id="ship-name" v-on:keydown.enter.prevent="fetchEntity" v-model="entity_name">
 				</div>
 			</form>
 			<div v-if="loading" class="fetch-loading">Loading...</div>
