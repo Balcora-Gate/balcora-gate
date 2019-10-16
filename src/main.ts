@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import BootstrapVue from 'bootstrap-vue';
+import { CollapsePlugin } from 'bootstrap-vue/src/components/collapse';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import Cookies from 'js-cookie';
@@ -9,6 +9,7 @@ import Axios from 'axios';
 import App from './App.vue';
 
 import EntityDisplay from './components/EntityDisplay.vue';
+import EntityDiff from './components/EntityDiff.vue';
 import BalcoraArticle from './components/BalcoraArticle.vue';
 import GuideIndex from './components/GuidesIndex.vue';
 import GuideShow from './components/GuideShow.vue';
@@ -17,11 +18,13 @@ import GuideEdit from './components/GuideEdit.vue';
 import UserCreate from './components/UserCreate.vue';
 import UserLogin from './components/UserLogin.vue';
 import Split from 'vue-split-panel';
+import VueHighlightJS from 'vue-highlight.js';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
-Vue.use(BootstrapVue);
+Vue.use(CollapsePlugin);
 Vue.use(Split);
+Vue.use(VueHighlightJS);
 
 const router = new VueRouter({
 	routes: [
@@ -30,8 +33,12 @@ const router = new VueRouter({
 			component: BalcoraArticle
 		},
 		{
-			path: `/data`,
+			path: `/data/reference`,
 			component: EntityDisplay
+		},
+		{
+			path: `/data/diff`,
+			component: EntityDiff
 		},
 		{
 			path: `/guide`,

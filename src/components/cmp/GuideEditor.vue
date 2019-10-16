@@ -15,7 +15,10 @@
 					<div v-html="mddata_body"></div>
 				</SplitArea>
 			</Split>
-			<button type="submit" :disabled="form_error.length > 0">Submit</button>
+			<div class="form-group">
+				<button type="button" @click="cancelEdit">Cancel</button>
+				<button type="submit" :disabled="form_error.length > 0">Submit</button>
+			</div>
 		</form>
 		<div class="form-error" v-if="form_error.length > 0">
 			<ul>
@@ -33,8 +36,15 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import marked from 'marked';
 import Cookies from 'js-cookie';
-import { standardPurify } from 'lib/html_util';
+import { standardPurify, unescapeHtml } from 'lib/html_util';
 import axios, { AxiosResponse } from 'axios';
+import HLJS from 'highlight.js';
+marked.setOptions({
+	highlight: (code, lang) => {
+		if (lang) return HLJS.highlight(lang, code).value;
+		else return HLJS.highlightAuto(code).value;
+	}
+});
 
 @Component({
 })
@@ -75,7 +85,7 @@ export default class GuideEditor extends Vue {
 	mounted () {
 		this.data_name = this.name;
 		this.data_title = this.title;
-		this.data_body = this.body;
+		this.data_body = unescapeHtml(this.body);
 	}
 
 	get res () {
@@ -116,6 +126,10 @@ export default class GuideEditor extends Vue {
 		return errs;
 	}
 
+	cancelEdit () {
+		this.$router.push(`/guide`);
+	}
+
 	async submitGuide () {
 		console.log(`submitting guide`);
 		const payload = {
@@ -144,10 +158,11 @@ export default class GuideEditor extends Vue {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 @import "styles/_variables";
 @import "styles/_mixins";
 @import "styles/article-standard";
+@import "styles/code-highlight";
 
 .guide-editor {
 	@include vertical-centered();
@@ -213,6 +228,10 @@ export default class GuideEditor extends Vue {
 		padding: 0.3em 10px 0.3em 10px;
 		width: 100%;
 		height: 100%;
+
+		div hr {
+			border: 1px solid $balcora-content-white;
+		}
 	}
 }
 .form-error {

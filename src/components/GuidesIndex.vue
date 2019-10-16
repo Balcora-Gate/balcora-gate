@@ -17,22 +17,23 @@
 				<li v-for="(guide, index) in searched_guides" :key="index">
 					<article class="guide">
 						<header class="guide-header">
-							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.name)" />
 							<div class="guide-header-info">
 								<div>By: {{guide.user}}</div>
 								<div class="guide-controls" v-if="user && user === guide.user">
-									<router-link :to="`guide/${guide.slug}/edit`">Edit</router-link>
-									<a href="javascript:void(0);" @click="deleteGuide(guide)">Delete</a>
+									<span>[ <router-link :to="`guide/${guide.slug}/edit`">Edit</router-link> ]</span>
+									<span>[ <a href="javascript:void(0);" @click="deleteGuide(guide)">Delete</a> ]</span>
 								</div>
 							</div>
+							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.title)" />
+							<div class="guide-header-info" />
 						</header>
-						<section class="guide-body" v-html="`${snip(toMarkDown(unescapeHtml(guide.body)), 64)}...`">
+						<section class="guide-body" v-html="`${snip(toMarkDown(unescapeHtml(guide.body)), 128)}...`">
 						</section>
 					</article>
 				</li>
 			</ul>
 		</section>
-		<div id="popup-modal">
+		<div v-if="user" id="popup-modal">
 			<password-confirm />
 		</div>
 	</main>
@@ -159,16 +160,16 @@ export default class GuidesIndex extends Vue {
 				margin-bottom: 0.7em;
 				padding: 0.3em;
 				width: 100%;
-				position: relative;
+				flex-direction: row;
+				justify-content: space-between;
 
 				.guide-header-info {
-					position: absolute;
-					left: 0;
 					font-size: 1rem;
 					border-right: 1px solid $balcora-highlight-gray;
 					padding: 0 1em 0 1em;
 					display: flex;
 					flex-direction: column;
+					min-width: 7em;
 
 					.guide-controls {
 						margin: 0.2em;

@@ -1,0 +1,12 @@
+@import "styles/_variables";
+@import "styles/_mixins";
+
+.dropdown {
+	position: relative;
+	.dropdown-content {
+		display: none;
+		position: absolute;
+		min-width: 5em;
+		z-index: 1;
+	}
+}
