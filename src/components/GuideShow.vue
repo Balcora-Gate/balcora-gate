@@ -5,7 +5,7 @@
 			<header>
 				<div class="title" v-html="unescapeHtml(guide.title)"></div>
 				<div class="info">By: {{ guide.user }}</div>
-				<ul class="actions">
+				<ul v-if="user && user === guide.user" class="actions">
 					<li class="action" v-for="(action, i) in actions" :key="i">
 						[ <a href="javascript:void(0);" @click="action.cb">{{ action.display }}</a> ]
 					</li>
@@ -28,6 +28,7 @@ import BreadCrumb from './BreadCrumb.vue';
 import marked from 'marked';
 import PasswordConfirm from './cmp/PasswordConfirm.vue';
 import HLJS from 'highlight.js';
+import Cookies from 'js-cookie';
 marked.setOptions({
 	highlight: (code, lang) => {
 		if (lang) return HLJS.highlight(lang, code).value;
@@ -58,6 +59,10 @@ export default class BalcoraGuide extends Vue {
 		} else {
 			return `Loading...`;
 		}
+	}
+
+	get user () {
+		return Cookies.get(`user_name`);
 	}
 
 	async mounted () {
