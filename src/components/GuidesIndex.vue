@@ -69,7 +69,9 @@ export default class GuidesIndex extends Vue {
 		if (this.search === ``) {
 			return this.guides;
 		} else {
-			return this.guides.filter(g => g.name.includes(this.search));
+			console.log(`guides including ${this.search}:`);
+			console.log(this.guides.filter(g => g.title.includes(this.search)));
+			return this.guides.filter(g => g.title.includes(this.search));
 		}
 	}
 
