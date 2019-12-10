@@ -49,6 +49,12 @@ router.post(
 	resourceFetcher({ model: User, key: `name` }),
 	async (req, res, next) => {
 		console.log(req.body);
+		console.log(`got:`);
+		console.log(res.locals.data);
+		if (!res.locals.data.length) {
+			res.status(401).end(`Incorrect username or password.`);
+			return;
+		}
 		console.log(res.locals.data[0]);
 		console.log(`---->>`);
 		if (await bcrypt.compare(req.body.pass, res.locals.data[0].pass)) {
@@ -56,7 +62,7 @@ router.post(
 			next();
 		} else {
 			console.log(`Incorrect password`);
-			res.status(401).end(`Incorrect password`);
+			res.status(401).end(`Incorrect username or password.`);
 			return;
 		}
 	},

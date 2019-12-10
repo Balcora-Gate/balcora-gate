@@ -14,9 +14,7 @@ export function validSession (...session_types: Array<SESSION_TYPE>) {
 		} else {
 			console.log(req.cookies);
 			console.log(req.session);
-			if (session_type === 2) {
-				next();
-			} else {
+			if (session_type !== 2) {
 				console.log(req.cookies);
 				if (!req.cookies) {
 					res.cookie(`user_name`, req.session!.user_name);

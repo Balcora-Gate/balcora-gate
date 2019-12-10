@@ -31,7 +31,7 @@ const schema = new mongoose.Schema({
 });
 
 schema.pre<IUser>(`save`, async function () {
-	if (this.isModified) {
+	if (this.isModified()) {
 		// just use default 10 rounds
 		const salt = await bcrypt.genSalt();
 		this.pass = await bcrypt.hash(this.pass, salt);

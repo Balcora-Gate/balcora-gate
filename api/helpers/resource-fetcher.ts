@@ -25,7 +25,7 @@ export default function (
 			console.log(res.locals.data);
 		} catch (err) {
 			console.log(err);
-			res.status(404).end(`User ${req.body.user} does not exist`);
+			res.status(404).end(`That's an error`);
 			return;
 		}
 		next();
