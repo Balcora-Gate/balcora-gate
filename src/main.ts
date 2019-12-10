@@ -26,6 +26,22 @@ Vue.use(CollapsePlugin);
 Vue.use(Split);
 Vue.use(VueHighlightJS);
 
+// Vue.directive('click-outside', {
+// 	bind: function (el, binding, vnode) {
+// 	  const clickOutsideEvent = (event: Event) => {
+// 		// here I check that click was outside the el and his childrens
+// 		if (!(el === event.target || el.contains(event.target as Node))) {
+// 		  // and if it did, call method provided in attribute value
+// 		  vnode!.context![binding.expression as string](event);
+// 		}
+// 	  };
+// 	  document.body.addEventListener('click', el.clickOutsideEvent)
+// 	},
+// 	unbind: function (el) {
+// 	  document.body.removeEventListener('click', el.clickOutsideEvent)
+// 	},
+//   });
+
 const router = new VueRouter({
 	routes: [
 		{
