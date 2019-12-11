@@ -8,10 +8,16 @@
 			</header>
 			<div class="guide-actions" v-if="user">
 				<router-link to="/guide/create" tag="button">New Guide</router-link>
-				<div class="guide-search-container">
-					<label for="guide-search">Search:</label>
-					<input type="search" name="guide-search" v-model="search">
-				</div>
+				<form class="guide-search-container">
+					<div class="guide-search-group">
+						<label for="guide-search-title">Search titles:</label>
+						<input type="search" name="guide-search-title" v-model="search_title">
+					</div>
+					<div class="guide-search-group">
+						<label for="guide-search-user">Search posters:</label>
+						<input type="search" name="guide-search-user" v-model="search_user">
+					</div>
+				</form>
 			</div>
 			<ul class="guide-list">
 				<li v-for="(guide, index) in searched_guides" :key="index">
@@ -50,6 +56,15 @@ import { snip } from 'lib/string_util';
 import BreadCrumb from './BreadCrumb.vue';
 import PasswordConfirm from './cmp/PasswordConfirm.vue';
 
+type Guide = {
+	_id: string,
+	name: string,
+	slug: string,
+	body: string,
+	title: string,
+	user: string
+};
+
 @Component({
 	components: {
 		BreadCrumb,
@@ -61,17 +76,24 @@ import PasswordConfirm from './cmp/PasswordConfirm.vue';
 	}
 })
 export default class GuidesIndex extends Vue {
-	guides: Array<{[key: string]: string}> = [];
-	search: string = ``;
+	guides: Array<Guide> = [];
+	search_title: string = ``;
+	search_user: string = ``;
 	popup_modal_el: HTMLElement | undefined;
 
 	get searched_guides () {
-		if (this.search === ``) {
+		if (this.search_title === `` && this.search_user === ``) {
 			return this.guides;
 		} else {
-			console.log(`guides including ${this.search}:`);
-			console.log(this.guides.filter(g => g.title.includes(this.search)));
-			return this.guides.filter(g => g.title.includes(this.search));
+			const filterTitles = (g: Guide) => {
+				return this.search_title ? g.title.toLowerCase().includes(this.search_title.toLowerCase()) : true;
+			};
+			const filterUsers = (g: Guide) => {
+				return this.search_user ? g.user.toLowerCase().includes(this.search_user.toLowerCase()) : true;
+			};
+			console.log(this.guides.filter(filterUsers));
+			console.log(this.guides.filter(filterTitles));
+			return this.guides.filter(filterTitles).filter(filterUsers);
 		}
 	}
 
@@ -112,6 +134,8 @@ export default class GuidesIndex extends Vue {
 	async mounted () {
 		this.popup_modal_el = document.getElementById(`popup-modal`)!;
 		this.fetchGuides();
+		this.search_title = (this.$route.query.title) ? this.$route.query.title as string : ``;
+		this.search_user = (this.$route.query.user) ? this.$route.query.user as string : ``;
 	}
 };
 </script>
@@ -132,12 +156,20 @@ export default class GuidesIndex extends Vue {
 		flex-direction: row;
 
 		.guide-search-container {
+			width: auto;
+			margin: 0;
 			margin-left: 1em;
+			padding: 0.5em;
 			display: flex;
-			flex-direction: column;
-			label {
-				font-size: 0.9em;
-				margin: 0;
+			flex-direction: row;
+			.guide-search-group {
+				display: flex;
+				flex-direction: column;
+				margin: 0 0.5em;
+				label {
+					font-size: 0.9em;
+					margin: 0;
+				}
 			}
 		}
 	}
