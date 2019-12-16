@@ -63,6 +63,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import marked from 'marked';
 import ClipboardJS from 'clipboard';
+import DOMPurify from 'dompurify';
 
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
@@ -118,7 +119,16 @@ export default class GuidesIndex extends Vue {
 	}
 
 	toMarkDown (plain: string) {
-		return marked(plain);
+		return DOMPurify.sanitize(marked(plain), {
+			FORBID_TAGS: [
+				`img`,
+				`svg`,
+				`figure`,
+				`table`,
+				`video`,
+				`audio`
+			]
+		});
 	}
 
 	async deleteGuide (guide: { [key: string]: any }) {
