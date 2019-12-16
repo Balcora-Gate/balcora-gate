@@ -6,12 +6,26 @@
 				<p>Guides submitted by the HWRM community!</p>
 				<img src="@/assets/balcora-logo-small.png" alt="BALCORA" />
 			</header>
-			<div class="guide-actions" v-if="user">
-				<router-link to="/guide/create" tag="button">New Guide</router-link>
-				<div class="guide-search-container">
-					<label for="guide-search">Search:</label>
-					<input type="search" name="guide-search" v-model="search">
-				</div>
+			<div class="guide-actions">
+				<router-link v-if="user" to="/guide/create" tag="button">New Guide</router-link>
+				<form class="guide-search-container" @submit.prevent="() => {}">
+					<div class="guide-search-group">
+						<label for="guide-search-title">Search titles:</label>
+						<input type="search" name="guide-search-title" v-model="search_title">
+					</div>
+					<div class="guide-search-group">
+						<label for="guide-search-user">Search posters:</label>
+						<input type="search" name="guide-search-user" v-model="search_user">
+					</div>
+					<div class="guide-search-group">
+						<button v-if="search_title || search_user"
+							id="guide-search-str-copy"
+							@click="copySearchURL"
+							:data-clipboard-text="guide_search_str">
+							Copy as shareable URL
+						</button>
+					</div>
+				</form>
 			</div>
 			<ul class="guide-list">
 				<li v-for="(guide, index) in searched_guides" :key="index">
@@ -44,11 +58,21 @@ import { Vue, Component } from 'vue-property-decorator';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import marked from 'marked';
+import ClipboardJS from 'clipboard';
 
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
 import BreadCrumb from './BreadCrumb.vue';
 import PasswordConfirm from './cmp/PasswordConfirm.vue';
+
+type Guide = {
+	_id: string,
+	name: string,
+	slug: string,
+	body: string,
+	title: string,
+	user: string
+};
 
 @Component({
 	components: {
@@ -61,22 +85,31 @@ import PasswordConfirm from './cmp/PasswordConfirm.vue';
 	}
 })
 export default class GuidesIndex extends Vue {
-	guides: Array<{[key: string]: string}> = [];
-	search: string = ``;
+	guides: Array<Guide> = [];
+	search_title: string = ``;
+	search_user: string = ``;
 	popup_modal_el: HTMLElement | undefined;
 
 	get searched_guides () {
-		if (this.search === ``) {
+		if (this.search_title === `` && this.search_user === ``) {
 			return this.guides;
 		} else {
-			console.log(`guides including ${this.search}:`);
-			console.log(this.guides.filter(g => g.title.includes(this.search)));
-			return this.guides.filter(g => g.title.includes(this.search));
+			const filterTitles = (g: Guide) => {
+				return this.search_title ? g.title.toLowerCase().includes(this.search_title.toLowerCase()) : true;
+			};
+			const filterUsers = (g: Guide) => {
+				return this.search_user ? g.user.toLowerCase().includes(this.search_user.toLowerCase()) : true;
+			};
+			return this.guides.filter(filterTitles).filter(filterUsers);
 		}
 	}
 
 	get user () {
 		return Cookies.get(`user_name`);
+	}
+
+	get guide_search_str () {
+		return `${window.location.href}?title=${this.search_title}&user=${this.search_user}`;
 	}
 
 	toMarkDown (plain: string) {
@@ -91,7 +124,6 @@ export default class GuidesIndex extends Vue {
 					this.$on(`valid_password`, () => res(`ok`));
 					this.$on(`modal_cancel`, () => res(`cancel`));
 				});
-				console.log(modal_result);
 				if (modal_result === `ok`) {
 					try {
 						const res = (await axios.delete(`${process.env.VUE_APP_API_URI}/guide/delete?slug=${guide.slug}`, { withCredentials: true }));
@@ -109,9 +141,15 @@ export default class GuidesIndex extends Vue {
 		this.guides = (await axios.get(`${process.env.VUE_APP_API_URI}/guide`, { withCredentials: true })).data;
 	}
 
+	copySearchURL () {
+		const clip = new ClipboardJS(`#guide-search-str-copy`);
+	}
+
 	async mounted () {
 		this.popup_modal_el = document.getElementById(`popup-modal`)!;
 		this.fetchGuides();
+		this.search_title = (this.$route.query.title) ? this.$route.query.title as string : ``;
+		this.search_user = (this.$route.query.user) ? this.$route.query.user as string : ``;
 	}
 };
 </script>
@@ -132,12 +170,26 @@ export default class GuidesIndex extends Vue {
 		flex-direction: row;
 
 		.guide-search-container {
+			width: auto;
+			margin: 0;
 			margin-left: 1em;
+			padding: 0.5em;
 			display: flex;
-			flex-direction: column;
-			label {
-				font-size: 0.9em;
-				margin: 0;
+			flex-direction: row;
+			.guide-search-group {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				margin: 0 0.5em;
+				label {
+					font-size: 0.9em;
+					margin: 0;
+				}
+				button {
+					margin-top: auto;
+					margin-bottom: 0;
+					height: 2.3em;
+				}
 			}
 		}
 	}
