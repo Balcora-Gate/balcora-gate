@@ -84,10 +84,8 @@ const router = new VueRouter({
 			component: GuideEdit,
 			beforeEnter: async (to, from, next) => {
 				const user_name = Cookies.get(`user_name`);
-				const guide_poster = (await Axios.get(`${process.env.VUE_APP_API_URI}/guide?slug=${to.params.slug}`)).data[0].user;
-				console.log(user_name);
-				console.log(guide_poster);
-				if (user_name === guide_poster) {
+				const guide = (await Axios.get(`${process.env.VUE_APP_API_URI}/guide?slug=${to.params.slug}`)).data[0];
+				if (user_name === guide.user || (guide.collaborators ? guide.collaborators.includes(user_name) : false)) {
 					next();
 				} else {
 					next(false);

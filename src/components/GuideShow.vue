@@ -5,8 +5,18 @@
 			<header>
 				<div class="title" v-html="unescapeHtml(guide.title)"></div>
 				<div class="info">By: {{ guide.user }}</div>
-				<ul v-if="user && user === guide.user" class="actions">
-					<li class="action" v-for="(action, i) in actions" :key="i">
+				<div class="collab-info" v-if="guide.collaborators && guide.collaborators.length">
+					Collaborators:
+					<ul class="collaborators">
+						<li class="collaborator-row" v-for="(collaborator_row, row_index) in compactArray(guide.collaborators, 4)" :key="row_index">
+							<span v-for="(collaborator, index) in collaborator_row" :key="index">
+								{{ collaborator }}
+							</span>
+						</li>
+					</ul>
+				</div>
+				<ul v-if="user && (user === guide.user || (guide.collaborators ? guide.collaborators.includes(user) : false))" class="actions">
+					<li class="action" v-for="(action, i) in filtered_actions" :key="i">
 						[ <a href="javascript:void(0);" @click="action.cb">{{ action.display }}</a> ]
 					</li>
 				</ul>
@@ -29,29 +39,34 @@ import marked from 'marked';
 import PasswordConfirm from './cmp/PasswordConfirm.vue';
 import HLJS from 'highlight.js';
 import Cookies from 'js-cookie';
+import { compactArray } from 'lib/arr_util';
 marked.setOptions({
 	highlight: (code, lang) => {
 		if (lang) return HLJS.highlight(lang, code).value;
 		else return HLJS.highlightAuto(lang).value;
 	}
 });
+
+type GuideAction = {
+	display: string,
+	op_only?: boolean,
+	cb: Function
+};
+
 @Component({
 	components: {
 		BreadCrumb,
 		PasswordConfirm
 	},
 	methods: {
-		unescapeHtml
+		unescapeHtml,
+		compactArray
 	}
 })
 export default class BalcoraGuide extends Vue {
 	guide: {[key: string]: string} = {};
 	show_modal: boolean = false;
-	actions: Array<{
-		[key: string]: any,
-		display: string,
-		cb: Function
-		}> = [];
+	actions: Array<GuideAction> = [];
 
 	get md_guide (): string {
 		if (this.guide.body) {
@@ -65,6 +80,20 @@ export default class BalcoraGuide extends Vue {
 		return Cookies.get(`user_name`);
 	}
 
+	get filtered_actions (): Array<GuideAction> {
+		return this.actions.filter(action => {
+			if (action.op_only) {
+				if (this.user === this.guide.user) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return true;
+			}
+		});
+	}
+
 	async mounted () {
 		this.guide = (await axios.get(`${process.env.VUE_APP_API_URI}/guide?slug=${this.$route.params.slug}`)).data[0];
 		this.actions = [
@@ -76,6 +105,7 @@ export default class BalcoraGuide extends Vue {
 			},
 			{
 				display: `delete`,
+				op_only: true,
 				cb: async () => {
 					if (window.confirm(`Do you really want to delete '${this.guide.name}'?\n\nThis action is irreversible!`)) {
 						this.show_modal = true;
@@ -115,6 +145,28 @@ export default class BalcoraGuide extends Vue {
 		}
 		.info {
 			font-size: 0.9em;
+		}
+		.collab-info {
+			font-size: 0.7em;
+			margin-top: 1em;
+			@include vertical-centered();
+			.collaborators {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				max-width: 20vw;
+				display: flex;
+				flex-direction: column;
+				.collaborator-row {
+					display: flex;
+					flex-direction: row;
+					justify-content: center;
+					line-height: 1em;
+					span {
+						margin: 0 0.25em;
+					}
+				}
+			}
 		}
 		.actions {
 			display: flex;
