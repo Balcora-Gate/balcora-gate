@@ -6,9 +6,9 @@
 				<p>Guides submitted by the HWRM community!</p>
 				<img src="@/assets/balcora-logo-small.png" alt="BALCORA" />
 			</header>
-			<div class="guide-actions" v-if="user">
-				<router-link to="/guide/create" tag="button">New Guide</router-link>
-				<form class="guide-search-container">
+			<div class="guide-actions">
+				<router-link v-if="user" to="/guide/create" tag="button">New Guide</router-link>
+				<form class="guide-search-container" @submit.prevent="() => {}">
 					<div class="guide-search-group">
 						<label for="guide-search-title">Search titles:</label>
 						<input type="search" name="guide-search-title" v-model="search_title">
@@ -16,6 +16,14 @@
 					<div class="guide-search-group">
 						<label for="guide-search-user">Search posters:</label>
 						<input type="search" name="guide-search-user" v-model="search_user">
+					</div>
+					<div class="guide-search-group">
+						<button v-if="search_title || search_user"
+							id="guide-search-str-copy"
+							@click="copySearchURL"
+							:data-clipboard-text="guide_search_str">
+							Copy as shareable URL
+						</button>
 					</div>
 				</form>
 			</div>
@@ -50,6 +58,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import marked from 'marked';
+import ClipboardJS from 'clipboard';
 
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
@@ -91,14 +100,16 @@ export default class GuidesIndex extends Vue {
 			const filterUsers = (g: Guide) => {
 				return this.search_user ? g.user.toLowerCase().includes(this.search_user.toLowerCase()) : true;
 			};
-			console.log(this.guides.filter(filterUsers));
-			console.log(this.guides.filter(filterTitles));
 			return this.guides.filter(filterTitles).filter(filterUsers);
 		}
 	}
 
 	get user () {
 		return Cookies.get(`user_name`);
+	}
+
+	get guide_search_str () {
+		return `${window.location.href}?title=${this.search_title}&user=${this.search_user}`;
 	}
 
 	toMarkDown (plain: string) {
@@ -113,7 +124,6 @@ export default class GuidesIndex extends Vue {
 					this.$on(`valid_password`, () => res(`ok`));
 					this.$on(`modal_cancel`, () => res(`cancel`));
 				});
-				console.log(modal_result);
 				if (modal_result === `ok`) {
 					try {
 						const res = (await axios.delete(`${process.env.VUE_APP_API_URI}/guide/delete?slug=${guide.slug}`, { withCredentials: true }));
@@ -129,6 +139,10 @@ export default class GuidesIndex extends Vue {
 
 	async fetchGuides () {
 		this.guides = (await axios.get(`${process.env.VUE_APP_API_URI}/guide`, { withCredentials: true })).data;
+	}
+
+	copySearchURL () {
+		const clip = new ClipboardJS(`#guide-search-str-copy`);
 	}
 
 	async mounted () {
@@ -165,10 +179,16 @@ export default class GuidesIndex extends Vue {
 			.guide-search-group {
 				display: flex;
 				flex-direction: column;
+				justify-content: center;
 				margin: 0 0.5em;
 				label {
 					font-size: 0.9em;
 					margin: 0;
+				}
+				button {
+					margin-top: auto;
+					margin-bottom: 0;
+					height: 2.3em;
 				}
 			}
 		}
