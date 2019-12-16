@@ -24,7 +24,13 @@ const schema = new mongoose.Schema({
 	user: {
 		type: String,
 		required: true
-	}
+	},
+	collaborators: [
+		{
+			type: String,
+			required: false
+		}
+	],
 });
 
 export default connections.site_content.model(`guide`, schema, `guide`);

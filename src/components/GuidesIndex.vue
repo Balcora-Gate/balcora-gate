@@ -33,9 +33,13 @@
 						<header class="guide-header">
 							<div class="guide-header-info">
 								<div>By: {{guide.user}}</div>
-								<div class="guide-controls" v-if="user && user === guide.user">
-									<span>[ <router-link :to="`guide/${guide.slug}/edit`">Edit</router-link> ]</span>
-									<span>[ <a href="javascript:void(0);" @click="deleteGuide(guide)">Delete</a> ]</span>
+								<div class="guide-controls" v-if="user">
+									<span v-if="user === guide.user || (guide.collaborators ? guide.collaborators.includes(user) : false)">
+										[ <router-link :to="`guide/${guide.slug}/edit`">Edit</router-link> ]
+									</span>
+									<span v-if="user === guide.user">
+										[ <a href="javascript:void(0);" @click="deleteGuide(guide)">Delete</a> ]
+									</span>
 								</div>
 							</div>
 							<router-link :to="`guide/${guide.slug}`" v-html="unescapeHtml(guide.title)" />
@@ -71,7 +75,8 @@ type Guide = {
 	slug: string,
 	body: string,
 	title: string,
-	user: string
+	user: string,
+	collaborators?: Array<string>
 };
 
 @Component({

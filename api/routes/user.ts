@@ -8,11 +8,9 @@ import { validSession, SESSION_TYPE } from '../middleware/valid-session';
 
 const router = express.Router();
 
-router.get(`/show`, resourceFetcher({ model: User, key: `name` }), (req, res, next) => {
-	if (!req.sessionID) {
-		res.redirect(`/`);
-	}
+router.get([`/show`, `/`], resourceFetcher({ model: User, key: `name` }), (req, res, next) => {
 	res.send(res.locals.data);
+	res.status(200).end();
 });
 
 router.get(`/validate`,

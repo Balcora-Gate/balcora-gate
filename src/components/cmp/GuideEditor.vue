@@ -2,7 +2,7 @@
 	<div class="guide-editor">
 		<header class="guide-create-header">
 			<div class="title">{{ page_title }}</div>
-			<div class="info">{{ page_action }} as {{ user }}</div>
+			<div class="info">{{ page_action }} as {{ page_user }}</div>
 		</header>
 		<form method="post" @submit.prevent="submitGuide" class="guide-creation-form vertical-centered">
 			<input type="text" name="guide-name" v-model="data_name" placeholder="Guide name" class="guide-name">
@@ -15,6 +15,18 @@
 					<div v-html="mddata_body"></div>
 				</SplitArea>
 			</Split>
+			<div class="collaboration" v-if="page_user === user">
+				<label for="collaborator-input"><abbr title="Collaborators are additional users who will have editing permissions for this guide">Collaborators:</abbr></label>
+				<vue-tags-input
+					name="collaborator-input"
+					placeholder="Add collaborators..."
+					class="collaborator-input"
+					v-model="tag"
+					:tags="tags"
+					@tags-changed="new_tags => tags = new_tags"
+					:autocomplete-items="tags_autocomplete"
+					:add-only-from-autocomplete="true" />
+			</div>
 			<div class="form-group">
 				<button type="button" @click="cancelEdit">Cancel</button>
 				<button type="submit" :disabled="form_error.length > 0">Submit</button>
@@ -33,11 +45,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import marked from 'marked';
 import Cookies from 'js-cookie';
 import { standardPurify, unescapeHtml } from 'lib/html_util';
 import axios, { AxiosResponse } from 'axios';
+// @ts-ignore
+import VueTagsInput from '@johmun/vue-tags-input';
 import HLJS from 'highlight.js';
 marked.setOptions({
 	highlight: (code, lang) => {
@@ -46,12 +60,23 @@ marked.setOptions({
 	}
 });
 
+type VTITag = {
+	text: string,
+	tiClasses?: Array<string>
+};
+
 @Component({
+	components: {
+		VueTagsInput
+	}
 })
 export default class GuideEditor extends Vue {
 	@Prop({
 		default: ``
 	}) name!: string;
+	@Prop({
+		required: true
+	}) user!: string;
 	@Prop({
 		default: ``
 	}) title!: string;
@@ -67,6 +92,9 @@ export default class GuideEditor extends Vue {
 	@Prop({
 		required: true
 	}) http_verb!: string;
+	@Prop({
+		default: []
+	}) collaborators!: Array<string>;
 
 	data_name: string = ``;
 	data_title: string = ``;
@@ -75,6 +103,22 @@ export default class GuideEditor extends Vue {
 		status: 0,
 		message: ``
 	};
+	tag: string = ``;
+	tags: Array<VTITag> = [];
+	tags_autocomplete: Array<VTITag> = [];
+	tags_debounce?: number;
+
+	@Watch(`tag`)
+	fetchUserTags (val: Array<string>, oldVal: Array<string>) {
+		const dataUrl = `${process.env.VUE_APP_API_URI}/user`;
+		if (this.tag.length) {
+			clearTimeout(this.tags_debounce);
+			this.tags_debounce = setTimeout(async () => {
+				const users = (await axios.get(`${dataUrl}?name=${val}`)).data as Array<any>;
+				this.tags_autocomplete = users.map(user => ({ text: user.name as string }));
+			}, 300);
+		}
+	}
 
 	beforeCreate () {
 		if (Cookies.get(`user_name`) === undefined) {
@@ -86,6 +130,9 @@ export default class GuideEditor extends Vue {
 		this.data_name = this.name;
 		this.data_title = this.title;
 		this.data_body = unescapeHtml(this.body);
+		this.tags = this.collaborators.map(user => ({
+			text: user
+		}));
 	}
 
 	get res () {
@@ -94,7 +141,7 @@ export default class GuideEditor extends Vue {
 		}
 	}
 
-	get user (): string {
+	get page_user (): string {
 		return Cookies.get(`user_name`) || ``;
 	}
 
@@ -136,7 +183,8 @@ export default class GuideEditor extends Vue {
 			name: this.data_name,
 			slug: this.data_name.split(``).map(c => c.replace(/\s+/gm, `-`)).join(``),
 			title: this.data_title,
-			body: standardPurify(this.data_body)
+			body: standardPurify(this.data_body),
+			collaborators: this.tags.map(tag => tag.text)
 		};
 		try {
 			switch (this.http_verb) {
@@ -208,6 +256,7 @@ export default class GuideEditor extends Vue {
 
 	.guide-body-splitter {
 		height: 45vh;
+		margin-bottom: 0.5em;
 	}
 
 	.guide-body-input {
@@ -231,6 +280,38 @@ export default class GuideEditor extends Vue {
 
 		div hr {
 			border: 1px solid $balcora-content-white;
+		}
+	}
+
+	.collaboration {
+		width: 100%;
+		@include vertical-centered();
+		label {
+			font-size: 0.8em;
+		}
+		.collaborator-input {
+			width: 100%;
+		}
+		.vue-tags-input {
+			background-color: $balcora-dark-gray;
+
+			.ti-input {
+				border: 2px solid $balcora-highlight-gray;
+				border-radius: 2px;
+			}
+
+			.ti-tag {
+				background-color: rgba($balcora-orange, 0.8);
+			}
+
+			.ti-autocomplete {
+				background-color: $balcora-dark-gray;
+				border: 1px solid $balcora-highlight-gray;
+
+				.ti-selected-item {
+					background-color: rgba($balcora-orange, 0.8);
+				}
+			}
 		}
 	}
 }
