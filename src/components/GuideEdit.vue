@@ -4,6 +4,7 @@
 		<section class="guide-create vertical-centered">
 			<guide-editor v-if="!loading" :page_title="`Edit guide`" :page_action="`Editing`" http_verb="put"
 				:name="guide_fields.name"
+				:user="guide_fields.user"
 				:title="guide_fields.title"
 				:body="guide_fields.body"
 				:collaborators="guide_fields.collaborators" />

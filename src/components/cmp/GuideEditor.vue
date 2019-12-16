@@ -2,7 +2,7 @@
 	<div class="guide-editor">
 		<header class="guide-create-header">
 			<div class="title">{{ page_title }}</div>
-			<div class="info">{{ page_action }} as {{ user }}</div>
+			<div class="info">{{ page_action }} as {{ page_user }}</div>
 		</header>
 		<form method="post" @submit.prevent="submitGuide" class="guide-creation-form vertical-centered">
 			<input type="text" name="guide-name" v-model="data_name" placeholder="Guide name" class="guide-name">
@@ -15,7 +15,7 @@
 					<div v-html="mddata_body"></div>
 				</SplitArea>
 			</Split>
-			<div class="collaboration">
+			<div class="collaboration" v-if="page_user === user">
 				<label for="collaborator-input"><abbr title="Collaborators are additional users who will have editing permissions for this guide">Collaborators:</abbr></label>
 				<vue-tags-input
 					name="collaborator-input"
@@ -74,6 +74,9 @@ export default class GuideEditor extends Vue {
 	@Prop({
 		default: ``
 	}) name!: string;
+	@Prop({
+		required: true
+	}) user!: string;
 	@Prop({
 		default: ``
 	}) title!: string;
@@ -138,7 +141,7 @@ export default class GuideEditor extends Vue {
 		}
 	}
 
-	get user (): string {
+	get page_user (): string {
 		return Cookies.get(`user_name`) || ``;
 	}
 
