@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { connections } from '../db-connections';
+import { playerspatch_connections } from '../db-connections';
 
 const schema = new mongoose.Schema({
 	name: {
@@ -16,4 +16,4 @@ const schema = new mongoose.Schema({
 	}
 });
 
-export default connections.game_data_playerspatch_11.model(`subs`, schema, `subs`);
+export default playerspatch_connections.latest.connection.model(`subs`, schema, `subs`);
