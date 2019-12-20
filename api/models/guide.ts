@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { connections } from '../db-connections';
+import { site_connections } from '../db-connections';
 
 const schema = new mongoose.Schema({
 	name: {
@@ -33,5 +33,4 @@ const schema = new mongoose.Schema({
 	],
 });
 
-export default connections.site_content.model(`guide`, schema, `guide`);
-//export default mongoose.model(`guide`, schema, `guide`);
+export default site_connections.site_content.model(`guide`, schema, `guide`);

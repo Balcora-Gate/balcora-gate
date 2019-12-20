@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Document } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { connections } from '../db-connections';
+import { site_connections } from '../db-connections';
 
 interface IUser extends Document {
 	name: string,
@@ -42,5 +42,5 @@ schema.methods.comparePass = function (incoming_pass: string) {
 	return bcrypt.compare(incoming_pass, this.pass);
 }
 
-export default connections.site_content.model(`user`, schema, `user`);
+export default site_connections.site_content.model(`user`, schema, `user`);
 //export default mongoose.model(`user`, schema, `user`);
