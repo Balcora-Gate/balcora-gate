@@ -1,5 +1,6 @@
 import express from 'express';
 import Guide from '../models/guide';
+import GuideTag from '../models/guide-tag';
 import resourceFetcher from '../helpers/resource-fetcher';
 import resourcePoster from '../helpers/resource-poster';
 import resourcePutter from '../helpers/resource-putter';
@@ -9,9 +10,9 @@ import { validSession, SESSION_TYPE } from '../middleware/valid-session';
 
 const router = express.Router();
 
-router.get(`/`, resourceFetcher({ model: Guide, key: `slug` }), (req, res, next) => {
-		res.send(res.locals.data);
-	});
+router.get(`/`, resourceFetcher({ model: Guide, key: `slug` }, { populate_keys: [ { key: `tags`, model: GuideTag } ] }), (req, res, next) => {
+	res.send(res.locals.data);
+});
 router.post(`/create`,
 	appSession, 
 	validSession(SESSION_TYPE.USER), 
