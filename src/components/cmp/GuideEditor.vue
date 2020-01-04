@@ -292,27 +292,6 @@ export default class GuideEditor extends Vue {
 		.collaborator-input {
 			width: 100%;
 		}
-		.vue-tags-input {
-			background-color: $balcora-dark-gray;
-
-			.ti-input {
-				border: 2px solid $balcora-highlight-gray;
-				border-radius: 2px;
-			}
-
-			.ti-tag {
-				background-color: rgba($balcora-orange, 0.8);
-			}
-
-			.ti-autocomplete {
-				background-color: $balcora-dark-gray;
-				border: 1px solid $balcora-highlight-gray;
-
-				.ti-selected-item {
-					background-color: rgba($balcora-orange, 0.8);
-				}
-			}
-		}
 	}
 }
 .form-error {
@@ -343,4 +322,8 @@ export default class GuideEditor extends Vue {
 .gutter {
 	background: $balcora-highlight-gray !important; // jeez
 }
+</style>
+
+<style lang="scss" scoped>
+@import "styles/vti";
 </style>
