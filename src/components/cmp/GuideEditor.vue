@@ -161,6 +161,9 @@ export default class GuideEditor extends Vue {
 		if (this.data_name === `create`) {
 			errs.push(`Invalid name '${this.data_name}'`);
 		}
+		if (/\W+/i.test(this.data_name)) {
+			errs.push(`Invalid name: cannot contain special characters`);
+		}
 		if (this.data_title.length === 0) {
 			errs.push(`Guide must have a title`);
 		}
