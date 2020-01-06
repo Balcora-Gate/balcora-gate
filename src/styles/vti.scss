@@ -17,7 +17,7 @@
         border: 1px solid $balcora-highlight-gray;
 
         .ti-selected-item {
-            background-color: rgba($balcora-orange, 0.8);
+            background-color: rgba($balcora-orange, 0.8) !important;
         }
     }
 }
