@@ -21,10 +21,22 @@
 					name="collaborator-input"
 					placeholder="Add collaborators..."
 					class="collaborator-input"
-					v-model="tag"
-					:tags="tags"
-					@tags-changed="new_tags => tags = new_tags"
-					:autocomplete-items="tags_autocomplete"
+					v-model="collab_tag"
+					:tags="collab_tags"
+					@tags-changed="new_tags => collab_tags = new_tags"
+					:autocomplete-items="collab_tags_autocomplete"
+					:add-only-from-autocomplete="true" />
+			</div>
+			<div class="guide-tags" v-if="page_user === user">
+				<label for="guide-tags-input"><abbr title="Tags help users search for your guide">Guide tags:</abbr></label>
+				<vue-tags-input
+					name="guide-tags-input"
+					placeholder="Add guide tags..."
+					class="guide-tags-input"
+					v-model="guide_tag"
+					:tags="guide_tags"
+					@tags-changed="new_tags => guide_tags = new_tags"
+					:autocomplete-items="filtered_gt_autocomplete"
 					:add-only-from-autocomplete="true" />
 			</div>
 			<div class="form-group">
@@ -61,6 +73,7 @@ marked.setOptions({
 });
 
 type VTITag = {
+	_id?: string,
 	text: string,
 	tiClasses?: Array<string>
 };
@@ -93,8 +106,11 @@ export default class GuideEditor extends Vue {
 		required: true
 	}) http_verb!: string;
 	@Prop({
-		default: []
+		default: () => ([])
 	}) collaborators!: Array<string>;
+	@Prop({
+		default: () => ([])
+	}) tags!: Array<VTITag>;
 
 	data_name: string = ``;
 	data_title: string = ``;
@@ -103,19 +119,36 @@ export default class GuideEditor extends Vue {
 		status: 0,
 		message: ``
 	};
-	tag: string = ``;
-	tags: Array<VTITag> = [];
-	tags_autocomplete: Array<VTITag> = [];
-	tags_debounce?: number;
+	collab_tag: string = ``;
+	collab_tags: Array<VTITag> = [];
+	collab_tags_autocomplete: Array<VTITag> = [];
+	collab_tags_debounce?: number;
 
-	@Watch(`tag`)
-	fetchUserTags (val: Array<string>, oldVal: Array<string>) {
+	guide_tag: string = ``;
+	guide_tags: Array<VTITag> = [];
+	guide_tags_autocomplete: Array<VTITag> = [];
+	guide_tags_debounce?: number;
+
+	@Watch(`collab_tag`)
+	fetchUserTags (val: Array<string>, old_val: Array<string>) {
 		const dataUrl = `${process.env.VUE_APP_API_URI}/user`;
-		if (this.tag.length) {
-			clearTimeout(this.tags_debounce);
-			this.tags_debounce = setTimeout(async () => {
+		if (this.collab_tag.length) {
+			clearTimeout(this.collab_tags_debounce);
+			this.collab_tags_debounce = setTimeout(async () => {
 				const users = (await axios.get(`${dataUrl}?name=${val}`)).data as Array<any>;
-				this.tags_autocomplete = users.map(user => ({ text: user.name as string }));
+				this.collab_tags_autocomplete = users.map(user => ({ text: user.name as string }));
+			}, 300);
+		}
+	}
+
+	@Watch(`guide_tag`)
+	fetchGuideTags (val: Array<string>, old_val: Array<string>) {
+		const dataUrl = `${process.env.VUE_APP_API_URI}/guide-tag`;
+		if (this.guide_tag.length) {
+			clearTimeout(this.guide_tags_debounce);
+			this.guide_tags_debounce = setTimeout(async () => {
+				const guide_tags = (await axios.get(`${dataUrl}`)).data as Array<any>;
+				this.guide_tags_autocomplete = guide_tags;
 			}, 300);
 		}
 	}
@@ -130,9 +163,14 @@ export default class GuideEditor extends Vue {
 		this.data_name = this.name;
 		this.data_title = this.title;
 		this.data_body = unescapeHtml(this.body);
-		this.tags = this.collaborators.map(user => ({
+		this.collab_tags = this.collaborators.map(user => ({
 			text: user
 		}));
+		this.guide_tags = this.tags;
+	}
+
+	get filtered_gt_autocomplete () {
+		return this.guide_tags_autocomplete.filter(gt => gt.text.toLowerCase().includes(this.guide_tag.toLowerCase()));
 	}
 
 	get res () {
@@ -178,13 +216,13 @@ export default class GuideEditor extends Vue {
 	}
 
 	async submitGuide () {
-		console.log(`submitting guide`);
 		const payload = {
 			name: this.data_name,
 			slug: this.data_name.split(``).map(c => c.replace(/\s+/gm, `-`)).join(``),
 			title: this.data_title,
 			body: standardPurify(this.data_body),
-			collaborators: this.tags.map(tag => tag.text)
+			collaborators: this.collab_tags.map(tag => tag.text),
+			tags: this.guide_tags
 		};
 		try {
 			switch (this.http_verb) {
@@ -283,35 +321,18 @@ export default class GuideEditor extends Vue {
 		}
 	}
 
-	.collaboration {
+	.collaboration,
+	.guide-tags {
 		width: 100%;
 		@include vertical-centered();
 		label {
 			font-size: 0.8em;
+			margin-top: 0.3em;
+			margin-bottom: 0.1em;
 		}
-		.collaborator-input {
+		.collaborator-input,
+		.guide-tags-input {
 			width: 100%;
-		}
-		.vue-tags-input {
-			background-color: $balcora-dark-gray;
-
-			.ti-input {
-				border: 2px solid $balcora-highlight-gray;
-				border-radius: 2px;
-			}
-
-			.ti-tag {
-				background-color: rgba($balcora-orange, 0.8);
-			}
-
-			.ti-autocomplete {
-				background-color: $balcora-dark-gray;
-				border: 1px solid $balcora-highlight-gray;
-
-				.ti-selected-item {
-					background-color: rgba($balcora-orange, 0.8);
-				}
-			}
 		}
 	}
 }
@@ -343,4 +364,8 @@ export default class GuideEditor extends Vue {
 .gutter {
 	background: $balcora-highlight-gray !important; // jeez
 }
+</style>
+
+<style lang="scss" scoped>
+@import "styles/vti";
 </style>

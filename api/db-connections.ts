@@ -8,10 +8,10 @@ export const dbConnection = (db_name: string) => {
 	{
 		useCreateIndex: true,
 		useNewUrlParser: true,
-		// useUnifiedTopology: true,
+		useUnifiedTopology: true,
 		dbName: db_name
 	});
-}
+};
 
 export const site_connections: { [key: string]: mongoose.Connection } = {
 	site_content: dbConnection(`site_content`)
@@ -27,7 +27,7 @@ export class PatchConnection {
 		this.conn_string = conn_string;
 		this.connection = dbConnection(conn_string);
 	}
-}
+};
 
 export class PatchConnectionList {
 	connections: Array<PatchConnection>;
