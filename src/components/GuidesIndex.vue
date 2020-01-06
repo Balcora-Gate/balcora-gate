@@ -26,10 +26,10 @@
 						v-model="tag"
 						:tags="tags"
 						@tags-changed="new_tags => tags = new_tags"
-						:autocomplete-items="tags_autocomplete"
+						:autocomplete-items="tags_autocomplete.filter(t => t.text.toLowerCase().includes(tag.toLowerCase()))"
 						:add-only-from-autocomplete="true" />
 					</div>
-					<div class="guide-search-group" v-if="search_title || search_user">
+					<div class="guide-search-group" v-if="search_title || search_user || tags.length">
 						<button id="guide-search-str-copy"
 							@click="copySearchURL"
 							:data-clipboard-text="guide_search_str">
@@ -127,7 +127,7 @@ export default class GuidesIndex extends Vue {
 		if (this.tag.length) {
 			clearTimeout(this.tags_debounce);
 			this.tags_debounce = setTimeout(async () => {
-				const guide_tags = (await axios.get(`${dataUrl}?text=${val}`)).data as Array<any>;
+				const guide_tags = (await axios.get(`${dataUrl}`)).data as Array<any>;
 				this.tags_autocomplete = guide_tags.map(guide_tag => ({ text: guide_tag.text as string }));
 			}, 300);
 		}

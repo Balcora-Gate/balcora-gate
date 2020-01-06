@@ -7,7 +7,8 @@
 				:user="guide_fields.user"
 				:title="guide_fields.title"
 				:body="guide_fields.body"
-				:collaborators="guide_fields.collaborators" />
+				:collaborators="guide_fields.collaborators"
+				:tags="guide_fields.tags" />
 		</section>
 	</main>
 </template>
