@@ -1,7 +1,7 @@
 @import "./variables";
 
 .vue-tags-input {
-    background-color: $balcora-dark-gray;
+    background-color: $balcora-dark-gray !important;
 
     .ti-input {
         border: 2px solid $balcora-highlight-gray;

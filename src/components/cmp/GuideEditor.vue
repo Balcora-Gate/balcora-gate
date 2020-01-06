@@ -252,6 +252,7 @@ export default class GuideEditor extends Vue {
 @import "styles/_mixins";
 @import "styles/article-standard";
 @import "styles/code-highlight";
+@import "styles/vti";
 
 .guide-editor {
 	@include vertical-centered();
@@ -367,8 +368,4 @@ export default class GuideEditor extends Vue {
 .gutter {
 	background: $balcora-highlight-gray !important; // jeez
 }
-</style>
-
-<style lang="scss" scoped>
-@import "styles/vti";
 </style>
