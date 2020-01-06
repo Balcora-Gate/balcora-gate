@@ -106,10 +106,10 @@ export default class GuideEditor extends Vue {
 		required: true
 	}) http_verb!: string;
 	@Prop({
-		default: []
+		default: () => ([])
 	}) collaborators!: Array<string>;
 	@Prop({
-		default: []
+		default: () => ([])
 	}) tags!: Array<VTITag>;
 
 	data_name: string = ``;
