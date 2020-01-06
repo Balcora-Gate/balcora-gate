@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 import { site_connections } from '../db-connections';
 
@@ -31,6 +31,12 @@ const schema = new mongoose.Schema({
 			required: false
 		}
 	],
+	tags: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: `guide_tag`
+		}
+	]
 });
 
 export default site_connections.site_content.model(`guide`, schema, `guide`);
