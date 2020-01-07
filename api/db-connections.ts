@@ -47,6 +47,8 @@ export class PatchConnectionList {
 };
 
 export const playerspatch_connections = new PatchConnectionList([
+	// this should be refactored so we just grab the list from atlas somehow
 	new PatchConnection(11, `game_data_playerspatch_11`),
-	new PatchConnection(12, `game_data_playerspatch_12`)
+	new PatchConnection(12, `game_data_playerspatch_12`),
+	new PatchConnection(13, `game_data_playerspatch_13`)
 ]);
