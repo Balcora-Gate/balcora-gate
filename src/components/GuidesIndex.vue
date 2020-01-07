@@ -7,7 +7,7 @@
 				<img src="@/assets/balcora-logo-small.png" alt="BALCORA" />
 			</header>
 			<div class="guide-actions">
-				<router-link v-if="user" to="/guide/create" tag="button">New Guide</router-link>
+				<router-link v-if="user" to="/guide/create" tag="button" class="new-guide-button">New Guide</router-link>
 				<form class="guide-search-container" @submit.prevent="() => {}">
 					<div class="guide-search-group">
 						<label for="guide-search-title">Search titles:</label>
@@ -18,8 +18,19 @@
 						<input type="search" name="guide-search-user" v-model="search_user">
 					</div>
 					<div class="guide-search-group">
-						<button v-if="search_title || search_user"
-							id="guide-search-str-copy"
+						<label for="guide-search-tag">Search tags:</label>
+						<vue-tags-input
+						name="guide-search-tag"
+						placeholder="Search tags..."
+						class="guide-search-tag"
+						v-model="tag"
+						:tags="tags"
+						@tags-changed="new_tags => tags = new_tags"
+						:autocomplete-items="tags_autocomplete.filter(t => t.text.toLowerCase().includes(tag.toLowerCase()))"
+						:add-only-from-autocomplete="true" />
+					</div>
+					<div class="guide-search-group" v-if="search_title || search_user || tags.length">
+						<button id="guide-search-str-copy"
 							@click="copySearchURL"
 							:data-clipboard-text="guide_search_str">
 							Copy as shareable URL
@@ -32,7 +43,7 @@
 					<article class="guide">
 						<header class="guide-header">
 							<div class="guide-header-info">
-								<div>By: {{guide.user}}</div>
+								<div>By: {{ guide.user }}</div>
 								<div class="guide-controls" v-if="user">
 									<span v-if="user === guide.user || (guide.collaborators ? guide.collaborators.includes(user) : false)">
 										[ <router-link :to="`guide/${guide.slug}/edit`">Edit</router-link> ]
@@ -58,12 +69,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import marked from 'marked';
 import ClipboardJS from 'clipboard';
 import DOMPurify from 'dompurify';
+// @ts-ignore
+import VueTagsInput from '@johmun/vue-tags-input';
 
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
@@ -77,13 +90,20 @@ type Guide = {
 	body: string,
 	title: string,
 	user: string,
-	collaborators?: Array<string>
+	collaborators?: Array<string>,
+	tags?: Array<VTITag>
+};
+
+type VTITag = {
+	text: string,
+	tiClasses?: Array<string>
 };
 
 @Component({
 	components: {
 		BreadCrumb,
-		PasswordConfirm
+		PasswordConfirm,
+		VueTagsInput
 	},
 	methods: {
 		unescapeHtml,
@@ -96,8 +116,25 @@ export default class GuidesIndex extends Vue {
 	search_user: string = ``;
 	popup_modal_el: HTMLElement | undefined;
 
+	tag: string = ``;
+	tags: Array<VTITag> = [];
+	tags_autocomplete: Array<VTITag> = [];
+	tags_debounce?: number;
+
+	@Watch(`tag`)
+	fetchUserTags (val: Array<string>, oldVal: Array<string>) {
+		const dataUrl = `${process.env.VUE_APP_API_URI}/guide-tag`;
+		if (this.tag.length) {
+			clearTimeout(this.tags_debounce);
+			this.tags_debounce = setTimeout(async () => {
+				const guide_tags = (await axios.get(`${dataUrl}`)).data as Array<any>;
+				this.tags_autocomplete = guide_tags.map(guide_tag => ({ text: guide_tag.text as string }));
+			}, 300);
+		}
+	}
+
 	get searched_guides () {
-		if (this.search_title === `` && this.search_user === ``) {
+		if (this.search_title === `` && this.search_user === `` && this.tags.length === 0) {
 			return this.guides;
 		} else {
 			const filterTitles = (g: Guide) => {
@@ -106,7 +143,11 @@ export default class GuidesIndex extends Vue {
 			const filterUsers = (g: Guide) => {
 				return this.search_user ? g.user.toLowerCase().includes(this.search_user.toLowerCase()) : true;
 			};
-			return this.guides.filter(filterTitles).filter(filterUsers);
+			const filterTags = (g: Guide) => {
+				if (!g.tags) return true;
+				return this.tags.length ? this.tags.every(t => g.tags!.map(gt => gt.text).includes(t.text)) : true;
+			};
+			return this.guides.filter(filterTitles).filter(filterUsers).filter(filterTags);
 		}
 	}
 
@@ -171,6 +212,7 @@ export default class GuidesIndex extends Vue {
 
 <style lang="scss" scoped>
 @import "styles/site";
+@import "styles/vti";
 
 .guide-list-container {
 	header {
@@ -184,10 +226,13 @@ export default class GuidesIndex extends Vue {
 		display: flex;
 		flex-direction: row;
 
+		.new-guide-button {
+			margin-right: 1em;
+		}
+
 		.guide-search-container {
 			width: auto;
 			margin: 0;
-			margin-left: 1em;
 			padding: 0.5em;
 			display: flex;
 			flex-direction: row;
@@ -204,6 +249,9 @@ export default class GuidesIndex extends Vue {
 					margin-top: auto;
 					margin-bottom: 0;
 					height: 2.3em;
+				}
+				.vue-tags-input {
+					min-width: 150px;
 				}
 			}
 		}

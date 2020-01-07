@@ -1,0 +1,23 @@
+@import "./variables";
+
+.vue-tags-input {
+    background-color: $balcora-dark-gray !important;
+
+    .ti-input {
+        border: 2px solid $balcora-highlight-gray;
+        border-radius: 2px;
+    }
+
+    .ti-tag {
+        background-color: rgba($balcora-orange, 0.8);
+    }
+
+    .ti-autocomplete {
+        background-color: $balcora-dark-gray;
+        border: 1px solid $balcora-highlight-gray;
+
+        .ti-selected-item {
+            background-color: rgba($balcora-orange, 0.8) !important;
+        }
+    }
+}

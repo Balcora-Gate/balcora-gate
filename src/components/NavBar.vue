@@ -46,17 +46,11 @@ import DropdownItem from './cmp/DropdownItem.vue';
 })
 export default class NavBar extends Vue {
 	get user () {
-		console.log(Cookies.get(`user_name`));
 		return Cookies.get(`user_name`);
-	}
-
-	@Watch(`user`, { immediate: true, deep: true }) w (new_val: string, old_val: string) {
-		console.log(`oh shit: ${new_val}`);
 	}
 
 	async logoutUser () {
 		const response = await Axios.post(`${process.env.VUE_APP_API_URI}/user/logout`, {}, { withCredentials: true });
-		console.log(response);
 		if (response.status === 200) {
 			const eraseCookieFromAllPaths = (name: string) => {
 				// This function will attempt to remove a cookie from all paths.
