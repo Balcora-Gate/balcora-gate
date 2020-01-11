@@ -34,7 +34,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import axios from 'axios';
 import { unescapeHtml, standardPurify } from 'lib/html_util';
-import BreadCrumb from './BreadCrumb.vue';
+import BreadCrumb from './cmp/BreadCrumb.vue';
 import marked from 'marked';
 import PasswordConfirm from './cmp/PasswordConfirm.vue';
 import HLJS from 'highlight.js';

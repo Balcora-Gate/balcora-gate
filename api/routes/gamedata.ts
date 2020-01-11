@@ -35,7 +35,7 @@ router.get(`/`,
 			res.status(404).end();
 			return;
 		}
-		resourceFetcher({ model: type, key: `name` })(req, res, next);
+		resourceFetcher({ model: type, key: `name` }, { limit: 0 })(req, res, next);
 	}, (req, res) => {
 		res.status(200).send(res.locals.data);
 	});
