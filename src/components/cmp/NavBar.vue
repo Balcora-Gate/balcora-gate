@@ -35,8 +35,9 @@ import { Component, Prop, Watch } from 'vue-property-decorator';
 import { allCookies } from 'lib/cookie_util';
 import Axios from 'axios';
 import Cookies from 'js-cookie';
-import Dropdown from './cmp/Dropdown.vue';
-import DropdownItem from './cmp/DropdownItem.vue';
+import Dropdown from '../cmp/Dropdown.vue';
+// @ts-ignore
+import DropdownItem from '../cmp/DropdownItem.vue';
 
 @Component({
 	components: {

@@ -34,7 +34,7 @@ export class PatchConnectionList {
 
 	get latest (): PatchConnection {
 		return this.connections.reduce((highest, current) => {
-			if (highest.version > current.version) {
+			if (highest.version < current.version) {
 				highest = current;
 			}
 			return highest;
