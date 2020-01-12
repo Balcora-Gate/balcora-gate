@@ -80,8 +80,10 @@ import VueTagsInput from '@johmun/vue-tags-input';
 
 import { unescapeHtml } from 'lib/html_util';
 import { snip } from 'lib/string_util';
-import BreadCrumb from './BreadCrumb.vue';
+import BreadCrumb from './cmp/BreadCrumb.vue';
 import PasswordConfirm from './cmp/PasswordConfirm.vue';
+
+import { VTITag } from '@/types/VTI';
 
 type Guide = {
 	_id: string,
@@ -92,11 +94,6 @@ type Guide = {
 	user: string,
 	collaborators?: Array<string>,
 	tags?: Array<VTITag>
-};
-
-type VTITag = {
-	text: string,
-	tiClasses?: Array<string>
 };
 
 @Component({

@@ -13,25 +13,8 @@
 				</div>
 			</form>
 			<div v-if="loading" class="fetch-loading">Loading...</div>
-			<div v-for="(e_data, i) in data" :key="i" class="entity-display">
-				<div class="entity_name">{{ e_data.name }}</div>
-				<div v-for="(cat_data, cat_name) in existant_data(e_data)" :key="cat_name" class="entity-category">
-					<b-button v-b-toggle="`${cat_name}_${i}`" class="btn-collapse">{{cat_name}}</b-button>
-					<b-collapse :id="`${cat_name}_${i}`" class="entity-category-body">
-						<table>
-							<thead>
-								<th>Attribute</th>
-								<th>Value</th>
-							</thead>
-							<tbody>
-								<tr v-for="(value, attribute) in cat_data" :key="attribute">
-									<td>{{ attribute }}</td>
-									<td>{{ value }}</td>
-								</tr>
-							</tbody>
-						</table>
-					</b-collapse>
-				</div>
+			<div v-else v-for="(e_data, i) in data" :key="i" class="entity-display">
+				<entity-info :entity-data="e_data" :entity-type="entity_type" />
 			</div>
 		</section>
 	</main>
@@ -40,11 +23,14 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import axios from 'axios';
-import BreadCrumb from './BreadCrumb.vue';
+import BreadCrumb from './cmp/BreadCrumb.vue';
+import EntityInfo from './cmp/EntityInfo.vue';
+import { Hardpoint, HARDPOINT_TYPE, Subsystem } from '../types/Entity';
 
 @Component({
 	components: {
-		BreadCrumb
+		BreadCrumb,
+		EntityInfo
 	}
 })
 export default class EntityDisplay extends Vue {
@@ -53,18 +39,46 @@ export default class EntityDisplay extends Vue {
 	private entity_name: string = '';
 	private loading: boolean = false;
 
-	existant_data (data: {[key: string]: any}) {
-		return Object.entries(data).reduce((acc: {[key: string]: any}, [k, v]: [string, any]) => {
-			if (v && typeof v === 'object') {
-				acc[k] = v;
-			}
-			return acc;
-		}, {});
+	mounted () {
+		this.$on(`new-search`, async (ev: { [key: string]: any }) => {
+			this.entity_type = ev.type;
+			this.entity_name = ev.name;
+			this.loading = true;
+			await this.fetchEntity();
+			this.loading = false;
+		});
+
+		this.entity_type = this.$route.query.type === undefined ? `ship` : this.$route.query.type as string;
+		this.entity_name = this.$route.query.name === undefined ? `` : this.$route.query.name as string;
+		if (this.$route.query.type !== undefined || this.$route.query.name !== undefined) {
+			this.loading = true;
+			this.fetchEntity().then(() => {
+				this.loading = false;
+			});
+		}
 	}
 
 	private async fetchEntity () {
 		this.loading = true;
 		this.data = (await axios.get(`${process.env.VUE_APP_API_URI}/data?type=${this.entity_type}&name=${this.entity_name}`)).data;
+		await Promise.all(this.data.map(async (entity: { [key: string]: any }) => {
+			if (this.entity_type === `ship`) {
+				entity.weapons = await Promise.all([
+					...Object.values(entity[`innate_weapons`]).map(name => ({ name: name, type: `innate` })),
+					...await Promise.all(Object.values(entity[`hardpoints`] as { [key: string]: Hardpoint })
+						.filter((hardpoint: Hardpoint) => hardpoint.type === HARDPOINT_TYPE['WEAPON'])
+						.map(async (hardpoint: Hardpoint) => {
+							const ref_sub = (await axios.get(`${process.env.VUE_APP_API_URI}/data?type=subs&name=${hardpoint.default_sub.toLowerCase().replace(/"/gm, ``)}`)).data[0] as Subsystem;
+							return {
+								name: ref_sub.weapon,
+								type: `hardpoint`,
+								subs: ref_sub.name
+							};
+						}))
+				]);
+			}
+			return entity;
+		}));
 		this.loading = false;
 	}
 };
@@ -123,6 +137,7 @@ export default class EntityDisplay extends Vue {
 
 			.entity-category-body {
 				transition: height 0.25s ease-in-out;
+				@include vertical-centered();
 			}
 		}
 	}

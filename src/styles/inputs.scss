@@ -67,6 +67,10 @@ button:disabled {
     color: lighten($balcora-highlight-gray, 10%);
 }
 
+.btn.btn-collapse.btn-secondary[aria-expanded="true"] {
+    color: $balcora-blue;
+}
+
 .form-group {
     * {
         margin-left: 10px;

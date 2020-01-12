@@ -65,18 +65,15 @@ import axios, { AxiosResponse } from 'axios';
 // @ts-ignore
 import VueTagsInput from '@johmun/vue-tags-input';
 import HLJS from 'highlight.js';
+
+import { VTITag } from '@/types/VTI';
+
 marked.setOptions({
 	highlight: (code, lang) => {
 		if (lang) return HLJS.highlight(lang, code).value;
 		else return HLJS.highlightAuto(code).value;
 	}
 });
-
-type VTITag = {
-	_id?: string,
-	text: string,
-	tiClasses?: Array<string>
-};
 
 @Component({
 	components: {

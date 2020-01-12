@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import Axios, { AxiosResponse } from 'axios';
-import BreadCrumb from './BreadCrumb.vue';
+import BreadCrumb from './cmp/BreadCrumb.vue';
 import { validatePassword } from '../js/string_util';
 
 @Component({

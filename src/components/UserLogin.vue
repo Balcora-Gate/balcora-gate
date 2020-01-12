@@ -24,7 +24,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import Axios, { AxiosResponse } from 'axios';
 import { allCookies } from 'lib/cookie_util';
-import BreadCrumb from './BreadCrumb.vue';
+import BreadCrumb from './cmp/BreadCrumb.vue';
 
 @Component({
 	components: {

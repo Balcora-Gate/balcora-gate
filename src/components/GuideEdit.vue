@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import BreadCrumb from './BreadCrumb.vue';
+import BreadCrumb from './cmp/BreadCrumb.vue';
 import GuideEditor from './cmp/GuideEditor.vue';
 import Axios from 'axios';
 

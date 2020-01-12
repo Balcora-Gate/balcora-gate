@@ -1,4 +1,4 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose from 'mongoose';
 import { Response, Request, NextFunction } from 'express';
 
 const populateAll = (
@@ -24,6 +24,8 @@ export default function (
 	options?: {
 		explicit_filter?: { [key: string]: string },
 		populate_keys?: Array<{ key: string, model: mongoose.Model<mongoose.Document, {[key: string]: any}> }>,
+		limit?: number,
+		skip?: number
 	}
 ) {
 	console.log(options);
@@ -43,7 +45,7 @@ export default function (
 			console.log(query_expr);
 			res.locals.data = await (async () => {
 				if (!options?.populate_keys) {
-					return query.model.find(query_expr).limit(30);
+					return query.model.find(query_expr).limit(options?.limit ?? 30).skip(options?.skip ?? 0);
 				} else {
 					console.log(`populate!`);
 					return populateAll(query.model, query_expr, ...options?.populate_keys).limit(30).exec();

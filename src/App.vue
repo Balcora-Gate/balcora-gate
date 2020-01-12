@@ -9,7 +9,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
-import NavBar from './components/NavBar.vue';
+import NavBar from './components/cmp/NavBar.vue';
 import BalcoraArticle from './components/BalcoraArticle.vue';
 
 @Component({

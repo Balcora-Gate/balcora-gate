@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import { CollapsePlugin } from 'bootstrap-vue/src/components/collapse';
+import { ButtonPlugin } from 'bootstrap-vue/src/components/button';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import Cookies from 'js-cookie';
@@ -23,6 +24,7 @@ import VueHighlightJS from 'vue-highlight.js';
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(CollapsePlugin);
+Vue.use(ButtonPlugin);
 Vue.use(Split);
 Vue.use(VueHighlightJS);
 
