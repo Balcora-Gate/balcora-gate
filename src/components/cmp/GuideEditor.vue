@@ -21,10 +21,10 @@
 					name="collaborator-input"
 					placeholder="Add collaborators..."
 					class="collaborator-input"
-					v-model="collab_tag"
-					:tags="collab_tags"
-					@tags-changed="new_tags => collab_tags = new_tags"
-					:autocomplete-items="collab_tags_autocomplete"
+					v-model="collab_vti.model_tag"
+					:tags="collab_vti.tags"
+					@tags-changed="new_tags => collab_vti.tags = new_tags"
+					:autocomplete-items="collab_vti.autocomplete_tags"
 					:add-only-from-autocomplete="true" />
 			</div>
 			<div class="guide-tags" v-if="page_user === user">
@@ -33,9 +33,9 @@
 					name="guide-tags-input"
 					placeholder="Add guide tags..."
 					class="guide-tags-input"
-					v-model="guide_tag"
-					:tags="guide_tags"
-					@tags-changed="new_tags => guide_tags = new_tags"
+					v-model="guide_vti.model_tag"
+					:tags="guide_vti.tags"
+					@tags-changed="new_tags => guide_vti.tags = new_tags"
 					:autocomplete-items="filtered_gt_autocomplete"
 					:add-only-from-autocomplete="true" />
 			</div>
@@ -66,7 +66,7 @@ import axios, { AxiosResponse } from 'axios';
 import VueTagsInput from '@johmun/vue-tags-input';
 import HLJS from 'highlight.js';
 
-import { VTITag } from '@/types/VTI';
+import { VTITag, VTIConfig } from '@/types/VTI';
 
 marked.setOptions({
 	highlight: (code, lang) => {
@@ -116,24 +116,23 @@ export default class GuideEditor extends Vue {
 		status: 0,
 		message: ``
 	};
-	collab_tag: string = ``;
-	collab_tags: Array<VTITag> = [];
-	collab_tags_autocomplete: Array<VTITag> = [];
-	collab_tags_debounce?: number;
 
-	guide_tag: string = ``;
-	guide_tags: Array<VTITag> = [];
-	guide_tags_autocomplete: Array<VTITag> = [];
-	guide_tags_debounce?: number;
+	collab_vti = new VTIConfig();
+
+	guide_vti = new VTIConfig();
+	// guide_tag: string = ``;
+	// guide_tags: Array<VTITag> = [];
+	// guide_tags_autocomplete: Array<VTITag> = [];
+	// guide_tags_debounce?: number;
 
 	@Watch(`collab_tag`)
 	fetchUserTags (val: Array<string>, old_val: Array<string>) {
 		const dataUrl = `${process.env.VUE_APP_API_URI}/user`;
-		if (this.collab_tag.length) {
-			clearTimeout(this.collab_tags_debounce);
-			this.collab_tags_debounce = setTimeout(async () => {
+		if (this.collab_vti.model_tag.length) {
+			clearTimeout(this.collab_vti.debounce);
+			this.collab_vti.debounce = setTimeout(async () => {
 				const users = (await axios.get(`${dataUrl}?name=${val}`)).data as Array<any>;
-				this.collab_tags_autocomplete = users.map(user => ({ text: user.name as string }));
+				this.collab_vti.tags = users.map(user => ({ text: user.name as string }));
 			}, 300);
 		}
 	}
@@ -141,11 +140,11 @@ export default class GuideEditor extends Vue {
 	@Watch(`guide_tag`)
 	fetchGuideTags (val: Array<string>, old_val: Array<string>) {
 		const dataUrl = `${process.env.VUE_APP_API_URI}/guide-tag`;
-		if (this.guide_tag.length) {
-			clearTimeout(this.guide_tags_debounce);
-			this.guide_tags_debounce = setTimeout(async () => {
+		if (this.guide_vti.model_tag.length) {
+			clearTimeout(this.guide_vti.debounce);
+			this.guide_vti.debounce = setTimeout(async () => {
 				const guide_tags = (await axios.get(`${dataUrl}`)).data as Array<any>;
-				this.guide_tags_autocomplete = guide_tags;
+				this.guide_vti.autocomplete_tags = guide_tags;
 			}, 300);
 		}
 	}
@@ -160,14 +159,14 @@ export default class GuideEditor extends Vue {
 		this.data_name = this.name;
 		this.data_title = this.title;
 		this.data_body = unescapeHtml(this.body);
-		this.collab_tags = this.collaborators.map(user => ({
+		this.collab_vti.tags = this.collaborators.map(user => ({
 			text: user
 		}));
-		this.guide_tags = this.tags;
+		this.guide_vti.tags = this.tags;
 	}
 
 	get filtered_gt_autocomplete () {
-		return this.guide_tags_autocomplete.filter(gt => gt.text.toLowerCase().includes(this.guide_tag.toLowerCase()));
+		return this.guide_vti.autocomplete_tags.filter(gt => gt.text.toLowerCase().includes(this.guide_vti.model_tag.toLowerCase()));
 	}
 
 	get res () {
@@ -196,8 +195,11 @@ export default class GuideEditor extends Vue {
 		if (this.data_name === `create`) {
 			errs.push(`Invalid name '${this.data_name}'`);
 		}
-		if (/\W+/i.test(this.data_name)) {
-			errs.push(`Invalid name: cannot contain special characters`);
+		if (/[\W]+/i.test(this.data_name)) {
+			// have to re-test to allow these through, js regex sucks
+			if (!(/[-_ ]+/i.test(this.data_name))) {
+				errs.push(`Invalid name: cannot contain special characters`);
+			}
 		}
 		if (this.data_title.length === 0) {
 			errs.push(`Guide must have a title`);
@@ -221,8 +223,8 @@ export default class GuideEditor extends Vue {
 			slug: this.data_name.split(``).map(c => c.replace(/\s+/gm, `-`)).join(``),
 			title: this.data_title,
 			body: standardPurify(this.data_body),
-			collaborators: this.collab_tags.map(tag => tag.text),
-			tags: this.guide_tags
+			collaborators: this.collab_vti.tags.map(tag => tag.text),
+			tags: this.guide_vti.tags
 		};
 		try {
 			switch (this.http_verb) {

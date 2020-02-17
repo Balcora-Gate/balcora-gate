@@ -2,6 +2,10 @@
 
 @import "styles/highlight-js/monokai-sublime";
 
+code {
+	color: lighten($balcora-blue, 7%);
+}
+
 pre {
 	color: #ddd;
 	border: 1px solid #ddd;

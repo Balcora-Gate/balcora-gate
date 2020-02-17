@@ -57,3 +57,34 @@ ul.clean-list {
 	margin: 0;
 	padding: 0;
 }
+
+table {
+	thead {
+		text-align: center;
+		border-bottom: 1px solid $balcora-highlight-gray;
+	}
+
+	tbody {
+		border-left: 1px solid $balcora-highlight-gray;
+		border-right: 1px solid $balcora-highlight-gray;
+
+		tr {
+			td {
+				padding: 5px 20px;
+				white-space: nowrap;
+			}
+
+			td:first-child {
+				border-right: 1px solid $balcora-highlight-gray;
+			}
+		}
+
+		tr:nth-child(even) {
+			background-color: $balcora-highlight-gray;
+
+			td:first-child {
+				border-right: 1px solid $balcora-base-gray;
+			}
+		}
+	}
+}
