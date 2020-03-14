@@ -257,35 +257,6 @@ export default class EntityInfo extends Vue {
 	.cat-display-tbl {
 		min-width: 50%;
 		max-width: 90%;
-
-		thead {
-			text-align: center;
-			border-bottom: 1px solid $balcora-highlight-gray;
-		}
-
-		tbody {
-			border-left: 1px solid $balcora-highlight-gray;
-			border-right: 1px solid $balcora-highlight-gray;
-
-			tr {
-				td {
-					padding: 5px 20px;
-					white-space: nowrap;
-				}
-
-				td:first-child {
-					border-right: 1px solid $balcora-highlight-gray;
-				}
-			}
-
-			tr:nth-child(even) {
-				background-color: $balcora-highlight-gray;
-
-				td:first-child {
-					border-right: 1px solid $balcora-base-gray;
-				}
-			}
-		}
 	}
 }
 </style>
