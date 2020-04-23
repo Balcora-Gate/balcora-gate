@@ -11,7 +11,7 @@ import App from './App.vue';
 
 import EntityDisplay from './components/EntityDisplay.vue';
 import EntityDiff from './components/EntityDiff.vue';
-import BalcoraArticle from './components/BalcoraArticle.vue';
+import HomePage from './components/HomePage.vue';
 import GuideIndex from './components/GuidesIndex.vue';
 import GuideShow from './components/GuideShow.vue';
 import GuideCreate from './components/GuideCreate.vue';
@@ -48,7 +48,7 @@ const router = new VueRouter({
 	routes: [
 		{
 			path: `/`,
-			component: BalcoraArticle
+			component: HomePage
 		},
 		{
 			path: `/data/reference`,
