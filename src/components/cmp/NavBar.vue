@@ -8,7 +8,7 @@
 			<!-- <a href="#">Guides</a> -->
 			<router-link to="/guide" class="n-link">Guides</router-link>
 			<!-- <a href="/data">Game Info</a> -->
-			<router-link to="/data/reference">Data lookup</router-link>
+			<router-link to="/data/reference" class="n-link">Data lookup</router-link>
 			<div class="right-links" v-if="user && user.length !== 0">
 				<a href="#">{{ user }}</a>
 				<a href="javascript:void(0);" @click="logoutUser">Logout</a>
