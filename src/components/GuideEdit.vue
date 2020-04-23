@@ -36,7 +36,7 @@ export default class GuideEdit extends Vue {
 			this.data_guide_fields = (await Axios.get(`${process.env.VUE_APP_API_URI}/guide?slug=${this.$route.params.slug}`)).data[0];
 			this.loading = false;
 		} catch (err) {
-			console.log(err);
+			console.error(err);
 			this.$router.go(-1); // TODO
 		}
 	}

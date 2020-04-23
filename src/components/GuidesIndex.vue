@@ -182,7 +182,7 @@ export default class GuidesIndex extends Vue {
 						const res = (await axios.delete(`${process.env.VUE_APP_API_URI}/guide/delete?slug=${guide.slug}`, { withCredentials: true }));
 						this.fetchGuides();
 					} catch (err) {
-						console.log(err.message);
+						console.error(err.message);
 					}
 				}
 				this.popup_modal_el.style.display = `none`;

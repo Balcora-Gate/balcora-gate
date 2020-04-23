@@ -42,13 +42,13 @@ export default class PasswordConfirm extends Vue {
 		try {
 			await Axios.get(`${process.env.VUE_APP_API_URI}/user/validate`);
 		} catch (err) {
-			console.log(`Invalid session (${err.message})`);
+			console.error(`Invalid session (${err.message})`);
 			window.location.href = `/`;
 		}
 	}
 
 	cancel () {
-		console.log(`cancelling`);
+		console.error(`cancelling`);
 		this.$parent.$emit(`modal_cancel`);
 	}
 

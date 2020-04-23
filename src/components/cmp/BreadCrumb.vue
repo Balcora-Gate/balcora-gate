@@ -17,7 +17,6 @@ import { Vue, Component } from 'vue-property-decorator';
 @Component({})
 export default class BreadCrumb extends Vue {
 	get crumbs () {
-		console.log(this.$router.currentRoute.path.split(`/`).slice(1));
 		return this.$router.currentRoute.path.split(`/`).slice(1);
 	}
 };

@@ -73,7 +73,7 @@ export default class UserCreate extends Vue {
 				throw new Error(`Unknown frontend error when attempting to login.`);
 			}
 		} catch (err) {
-			console.log(`error: ${err.message}`);
+			console.error(`error: ${err.message}`);
 		}
 	}
 };

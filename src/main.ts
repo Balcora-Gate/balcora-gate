@@ -60,24 +60,12 @@ const router = new VueRouter({
 		},
 		{
 			path: `/guide`,
-			component: GuideIndex,
-			meta: {
-				middleware: () => {
-					console.log(document.cookie);
-				}
-			}
+			component: GuideIndex
 		},
 		{
 			path: `/guide/create`,
 			component: GuideCreate,
 			beforeEnter: (to, from, next) => {
-				// const cookies = document.cookie.split(`;`).reduce((acc: {[key: string]: string}, kv_pair: string) => {
-				// 	const [key, val] = kv_pair.split(`=`);
-				// 	acc[key] = val;
-				// 	return acc;
-				// }, {});
-				// console.log(cookies);
-				console.log(Cookies.get(`user_name`) !== undefined);
 				Cookies.get(`user_name`) !== undefined ? next() : next(false);
 			}
 		},

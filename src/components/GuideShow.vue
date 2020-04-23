@@ -113,13 +113,12 @@ export default class BalcoraGuide extends Vue {
 							this.$on(`valid_password`, () => res(`ok`));
 							this.$on(`modal_cancel`, () => res(`cancel`));
 						});
-						console.log(modal_result);
 						if (modal_result === `ok`) {
 							try {
 								const res = (await axios.delete(`${process.env.VUE_APP_API_URI}/guide/delete?slug=${this.guide.slug}`, { withCredentials: true }));
 								this.$router.push(`/guide`);
 							} catch (err) {
-								console.log(err.message);
+								console.error(err.message);
 							}
 						}
 						this.show_modal = false;
