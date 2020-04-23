@@ -4,18 +4,11 @@
 			<ul>
 			<router-link to="/" class="navbar-logo-container"><img src="@/assets/balcora-logo-small.png" alt="BALCORA" class="navbar-logo"/></router-link>
 			<a href="/" class="n-link">Home</a>
-			<a href="#" class="n-link">2.3 Changelogs</a>
+			<a v-if="false" href="#" class="n-link">2.3 Changelogs</a>
 			<!-- <a href="#">Guides</a> -->
 			<router-link to="/guide" class="n-link">Guides</router-link>
 			<!-- <a href="/data">Game Info</a> -->
-			<dropdown head="Game Info" class="n-link">
-				<dropdown-item>
-					<router-link to="/data/reference">Data lookup</router-link>
-				</dropdown-item>
-				<dropdown-item>
-					<router-link to="/data/diff">Version comparison</router-link>
-				</dropdown-item>
-			</dropdown>
+			<router-link to="/data/reference" class="n-link">Data lookup</router-link>
 			<div class="right-links" v-if="user && user.length !== 0">
 				<a href="#">{{ user }}</a>
 				<a href="javascript:void(0);" @click="logoutUser">Logout</a>
