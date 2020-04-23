@@ -6,10 +6,19 @@
 	width: 100%;
 }
 
-@mixin vertical-centered {
+%center-flex {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
+}
+
+@mixin vertical-centered {
+	@extend %center-flex;
+	flex-direction: column;
+}
+
+@mixin horizontal-centered {
+	@extend %center-flex;
+	flex-direction: row;
 }
 
 @mixin select-like {
