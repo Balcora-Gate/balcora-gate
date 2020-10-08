@@ -109,20 +109,20 @@
 							<tbody>
 								<tr v-for="(value, attribute) in cat_data" :key="attribute">
 									<template v-if="cat_name === `hardpoints`">
-										<td>{{ value[`name`] }}</td>
+										<!-- <td>{{ value[`name`] }}</td>
 										<td>
 											<ul class="clean-list">
 												<li>
 													Type: <code>{{ value[`type`] }}</code>
 												</li>
 												<li>
-													Default sub: <a href="javascript:void(0);" @click="emitNewSearch(value[`default_sub`], `subs`)">{{ value[`default_sub`].replace(/\W/gm, ``) }}</a>
+													Default subsystem: <a href="javascript:void(0);" @click="emitNewSearch(value[`default_subs`], `subs`)">{{ value[`default_subs`].replace(/\W/gm, ``) }}</a>
 												</li>
-												<li v-for="(sub, sub_index) in Object.entries(value).filter(kv => kv[0].includes(`potential`)).map(kv => kv[1]).filter(p_sub => p_sub.replace(/\W/gm, ``))" :key="sub_index">
-													Potential sub {{ sub_index }}: <a href="javascript:void(0);" @click="emitNewSearch(sub.replace(/\W/gm, ``), `subs`)">{{ sub }}</a>
+												<li v-for="(sub, sub_index) in Object.entries(value).filter(kv => kv[0].includes(`potential`)).map(kv => kv[1]).filter(p_subs => p_subs.replace(/\W/gm, ``))" :key="sub_index">
+													Potential subsystems: {{ sub_index }}: <a href="javascript:void(0);" @click="emitNewSearch(subs.replace(/\W/gm, ``), `subs`)">{{ subs }}</a>
 												</li>
 											</ul>
-										</td>
+										</td> -->
 									</template>
 									<template v-else-if="cat_name === `weapons`">
 										<td>
@@ -152,6 +152,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+// eslint-disable-next-line
 import { ENTITY_TYPE } from '@/types/Entity';
 
 @Component({})
@@ -165,8 +166,8 @@ export default class EntityInfo extends Vue {
 	}) entityType!: ENTITY_TYPE;
 
 	get existant_data () {
-		return Object.entries(this.entityData).reduce((acc: {[key: string]: any}, [k, v]: [string, any]) => {
-			const non_display_cats = [ `innate_weapons` ];
+		return Object.entries({ ...this.entityData, used_by: undefined }).reduce((acc: {[key: string]: any}, [k, v]: [string, any]) => {
+			const non_display_cats = ['innate_weapons'];
 			if (v && typeof v === 'object' && !non_display_cats.includes(k) && Object.values(v).length !== 0) {
 				acc[k] = v;
 			}
@@ -188,7 +189,7 @@ export default class EntityInfo extends Vue {
 	}
 
 	emitNewSearch (name: string, type: string) {
-		this.$parent.$emit(`new-search`, { name: name.replace(/\W/gm, ``).toLowerCase(), type });
+		this.$parent.$emit('new-search', { name: name.replace(/\W/gm, '').toLowerCase(), type });
 	}
 };
 </script>
