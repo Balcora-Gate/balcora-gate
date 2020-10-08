@@ -29,7 +29,7 @@ const router = express.Router();
 router.get(`/`,
 	async (req, res, next) => {
 		console.log(req.query.type);
-		const type = modelType(req.query.type);
+		const type = modelType(req.query.type as string);
 		if (type === undefined) {
 			res.write(`Resource type '${req.query.type}' is unrecognized.`)
 			res.status(404).end();
