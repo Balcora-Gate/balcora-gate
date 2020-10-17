@@ -20,7 +20,7 @@
     "@types/recursive-readdir": "^2.2.0",
     "@types/redis": "^2.8.14",
     "@types/uuid": "^3.4.6",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "concurrently": "^4.1.2",
     "connect-redis": "^4.0.3",
     "cookie-parser": "^1.4.4",
