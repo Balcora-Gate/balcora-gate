@@ -35,7 +35,7 @@
     "express": "^4.17.1",
     "highlight.js": "^9.18.1",
     "js-cookie": "^2.2.1",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "split.js": "^1.5.11",
     "tiny-cookie": "^2.3.2",
     "vue": "^2.6.11",
